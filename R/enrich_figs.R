@@ -104,7 +104,7 @@ rnaplots <- function(dds,pcut=0.05,folder=NULL,fprefix=NULL){
 
   #gene dotplot
   tmat=SummarizedExperiment::assay(dds)
-  tmat=tmat[row.names(tmat %in% row.names(resv),]
+  tmat=tmat[row.names(tmat) %in% row.names(resv),]
   row.names(tmat)=resv$symbol
   tmatd=as.data.frame(tmat)
   tmatd$symbol=row.names(tmatd)
