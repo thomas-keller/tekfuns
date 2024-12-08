@@ -4,7 +4,7 @@
 \alias{rnaplots}
 \title{automagically make a bunch of standard deseq2 and clusterprofiler plots}
 \usage{
-rnaplots(dds, pcut = 0.05, folder = NULL, fprefix = NULL)
+rnaplots(dds, pcut = 0.05, fcut = 2, folder = NULL, fprefix = NULL)
 }
 \arguments{
 \item{dds}{DESeqDataset object}

@@ -152,7 +152,7 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
   p=p+ggplot2::theme_bw()
   rres$endot=p
 
-  p=cnetfilt(greso)
+  p=cnetfilt(greso,fcut)
   rres$cnetfilt=p
 
   ego=enrichplot::pairwise_termsim(gres)

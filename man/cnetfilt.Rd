@@ -4,7 +4,7 @@
 \alias{cnetfilt}
 \title{Filter a gene set enrichment result to eliminate genes with low absolute fold-change}
 \usage{
-cnetfilt(gse, fcut = 2, showcat = 4)
+cnetfilt(gse, fcut = 2, showcat = 3)
 }
 \arguments{
 \item{gse}{gene-set enrichment object from clusterprofiler}
