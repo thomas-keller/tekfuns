@@ -129,7 +129,8 @@ rnaplots <- function(dds,folder=NULL,fprefix=NULL){
   m_t2g$gs_name=stringr::str_replace_all(m_t2g$gs_name,"_"," ")
 
   set.seed(1234)
-  print('got here')
+  print(head(fc))
+  print(head(m_t2g))
   #GSEA function takes minimum two arguments; the fold-change values, and the pathway-gene database
   #if you take a look at the m_t2g dataframe we constructed from msigdbr, its has two columns, one with the pathway name (gs_name)
   #and one with the gene id (entrez_gene)
