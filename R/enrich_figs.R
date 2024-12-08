@@ -10,7 +10,7 @@
 #' @return cnetplot with filtered genes
 #' @export
 #' @examples todo
-cnetfilt <- function(gse,fcut=2.0,showcat=4){
+cnetfilt <- function(gse,fcut=2.0,showcat=3){
   gl=gse@geneList
   gl=gl[abs(gl)>=fcut]
   core.genes <- strsplit(as.data.frame(gse)[,"core_enrichment"] , "/")
@@ -38,7 +38,7 @@ cnetfilt <- function(gse,fcut=2.0,showcat=4){
 #' @export
 #'
 #' @examples todo
-rnaplots <- function(dds,pcut=0.05,folder=NULL,fprefix=NULL){
+rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
   if(!is.null(folder)){
     dir_create(folder)
   }
@@ -92,7 +92,6 @@ rnaplots <- function(dds,pcut=0.05,folder=NULL,fprefix=NULL){
   mat  <- SummarizedExperiment::assay(vsd)[ topVarGenes, ]
   mat  <- mat - rowMeans(mat)
   resv=res05[row.names(res05) %in% row.names(mat),]
-  print(dim(resv))
   #row.names(mat)=resv$symbol
   anno <- as.data.frame(colData(vsd)[, c("condition")])
   colnames(anno) <- "condition"
@@ -105,7 +104,6 @@ rnaplots <- function(dds,pcut=0.05,folder=NULL,fprefix=NULL){
   #gene dotplot
   tmat=SummarizedExperiment::assay(dds)
   tmat=tmat[row.names(tmat) %in% row.names(resv),]
-  print(dim(tmat))
   #row.names(tmat)=resv$symbol
   tmatd=as.data.frame(tmat)
   tmatd$symbol=row.names(tmatd)
