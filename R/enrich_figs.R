@@ -62,7 +62,7 @@ rnaplots <- function(dds,folder=NULL,fprefix=NULL){
   res05$symbol <- AnnotationDbi::mapIds(org.Hs.eg.db::org.Hs.eg.db, keys = ens, column = c('SYMBOL'), keytype = 'ENSEMBL')
   res05$entrez <- AnnotationDbi::mapIds(org.Hs.eg.db::org.Hs.eg.db, keys = ens,column = c('ENTREZID'),
                          keytype = 'ENSEMBL')
-  rres$res05
+  rres$res05=res05
   vsd=DESeq2::vst(dds,blind=TRUE)
   #pca
   p=DESeq2::plotPCA(vsd,intgroup="condition")
@@ -132,7 +132,6 @@ rnaplots <- function(dds,folder=NULL,fprefix=NULL){
   m_t2g$gs_name=stringr::str_remove(m_t2g$gs_name,"HALLMARK ")
   #replace the underscores with spaces to make wrapping easier
   m_t2g$gs_name=stringr::str_replace_all(m_t2g$gs_name,"_"," ")
-  print(head(m_t2g))
   set.seed(1234)
 
   #GSEA function takes minimum two arguments; the fold-change values, and the pathway-gene database
