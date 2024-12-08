@@ -107,7 +107,6 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
   #row.names(tmat)=resv$symbol
   tmatd=as.data.frame(tmat)
   tmatd$symbol=row.names(tmatd)
-  print(dim(tmatd))
   expr_long=tidyr::pivot_longer(tmatd,-symbol,names_to='names',values_to='expression')
   expr_long=dplyr::inner_join(expr_long,coldata)
   expr_long$expression=expr_long$expression+1
@@ -119,7 +118,6 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
   #rename x and y labels
   p=p+ggplot2::xlab("gene symbol")+ggplot2::ylab("log10 counts")
   rres$top20dot=p
-  print(rres$top20dot)
   #now to enrich plots
   fc=res05$log2FoldChange
   names(fc)=res05$entrez
