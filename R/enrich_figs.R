@@ -119,7 +119,7 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
   #rename x and y labels
   p=p+ggplot2::xlab("gene symbol")+ggplot2::ylab("log10 counts")
   rres$top20dot=p
-
+  print(rres$top20dot)
   #now to enrich plots
   fc=res05$log2FoldChange
   names(fc)=res05$entrez
