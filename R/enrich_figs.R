@@ -91,7 +91,7 @@ rnaplots <- function(dds,pcut=0.05,folder=NULL,fprefix=NULL){
   topVarGenes <- head(order(rowVars(SummarizedExperiment::assay(vsd)), decreasing = TRUE), 20)
   mat  <- SummarizedExperiment::assay(vsd)[ topVarGenes, ]
   mat  <- mat - rowMeans(mat)
-  resv=res05[row.names(mat),]
+  resv=res05[row.names(mat) %in% row.names(res05),]
 
   row.names(mat)=resv$symbol
   anno <- as.data.frame(colData(vsd)[, c("condition")])
@@ -103,7 +103,8 @@ rnaplots <- function(dds,pcut=0.05,folder=NULL,fprefix=NULL){
   rres$heatmap=p
 
   #gene dotplot
-  tmat=SummarizedExperiment::assay(dds)[row.names(resv),]
+  tmat=SummarizedExperiment::assay(dds)
+  tmat=tmat[row.names(resv) %in% row.names(tmat),]
   row.names(tmat)=resv$symbol
   tmatd=as.data.frame(tmat)
   tmatd$symbol=row.names(tmatd)
