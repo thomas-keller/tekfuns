@@ -138,7 +138,7 @@ rnaplots <- function(dds,folder=NULL,fprefix=NULL){
   #only use original enrich result for filtering genes with cnetfilt
   greso=gres
   #use setReadable to convert entrez ids to gene names
-  gres=clusterProfiler::setReadable(gres,OrgDb=org.Hs.eg.db,keyType="ENTREZID")
+  gres=clusterProfiler::setReadable(gres,OrgDb=org.Hs.eg.db::org.Hs.eg.db,keyType="ENTREZID")
 
 
   p=dotplot(gres,x='NES')
