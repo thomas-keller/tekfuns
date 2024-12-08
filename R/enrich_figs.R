@@ -144,20 +144,20 @@ rnaplots <- function(dds,folder=NULL,fprefix=NULL){
   #use setReadable to convert entrez ids to gene names
   gres=clusterProfiler::setReadable(gres,OrgDb=org.Hs.eg.db::org.Hs.eg.db,keyType="ENTREZID")
 
-  p=dotplot(gres,x='NES')
+  p=enrichplot::dotplot(gres,x='NES')
 
-  p=p+scale_y_discrete(labels=function(x) str_wrap(x,width=40))
+  p=p+ggplot2::scale_y_discrete(labels=function(x) stringr::str_wrap(x,width=40))
   # next, lets make the x axis label more descriptive
   #you can use xlab and ylab for this if its a ggplot
-  p=p+xlab("Normalized Enrichment Score")
-  p=theme_bw()
+  p=p+ggplot2::xlab("Normalized Enrichment Score")
+  p=p+ggplot2::theme_bw()
   rres$endot=p
 
   p=cnetfilt(greso)
   rres$cnetfilt=p
 
-  ego=pairwise_termsim(gres)
-  p=emapplot(ego,edge.params=list(min=.1))
+  ego=enrichplot::pairwise_termsim(gres)
+  p=enrichplot::emapplot(ego,edge.params=list(min=.1))
   rres$emap=p
   #save figures to folder/pdf
   #only if prefix and folder
@@ -170,13 +170,13 @@ rnaplots <- function(dds,folder=NULL,fprefix=NULL){
     fname=glue::glue("./{folder}/{fprefix}_gres.csv")
     readr::write_csv(as.data.frame(rres$gres),fname)
     fname=glue::glue("./{folder}/{fprefix}_enrichdot.pdf")
-    ggplot2::ggsave(fname,rres$endot)
+    ggplot2::ggsave(fname,plot=rres$endot)
     fname=glue::glue("./{folder}/{fprefix}_cnetfilt.pdf")
-    ggplot2::ggsave(fname,rres$cnetfilt)
+    ggplot2::ggsave(fname,plot=rres$cnetfilt)
     fname=glue::glue("./{folder}/{fprefix}_emap.pdf")
-    ggplot2::ggsave(fname,rres$emap)
+    ggplot2::ggsave(fname,plot=rres$emap)
     fname=glue::glue("./{folder}/{fprefix}_pca.pdf")
-    ggplot2::ggsave(fname,rres$pca)
+    ggplot2::ggsave(fname,plotrres$pca)
     fname=glue::glue("./{folder}/{fprefix}_disp.pdf")
     ggplot2::ggsave(fname,rres$disp)
     fname=glue::glue("./{folder}/{fprefix}_volc.pdf")
