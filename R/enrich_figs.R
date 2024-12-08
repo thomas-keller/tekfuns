@@ -30,6 +30,7 @@ cnetfilt <- function(gse,fcut=2.0,showcat=4){
 #' automagically make a bunch of standard deseq2 and clusterprofiler plots
 #'
 #' @param dds DESeqDataset object
+#' @param pcut gsea pvalue threshold
 #' @param folder output result folder
 #' @param fprefix output analysis prefix
 #'
@@ -37,7 +38,7 @@ cnetfilt <- function(gse,fcut=2.0,showcat=4){
 #' @export
 #'
 #' @examples todo
-rnaplots <- function(dds,folder=NULL,fprefix=NULL){
+rnaplots <- function(dds,pcut=0.05,folder=NULL,fprefix=NULL){
   if(!is.null(folder)){
     dir_create(folder)
   }
@@ -136,7 +137,7 @@ rnaplots <- function(dds,folder=NULL,fprefix=NULL){
   #if you take a look at the m_t2g dataframe we constructed from msigdbr, its has two columns, one with the pathway name (gs_name)
   #and one with the gene id (entrez_gene)
 
-  gres=clusterProfiler::GSEA(fc,TERM2GENE=m_t2g)
+  gres=clusterProfiler::GSEA(fc,TERM2GENE=m_t2g,pvalueCutoff=pcut)
   #only use original enrich result for filtering genes with cnetfilt
   greso=gres
   #use setReadable to convert entrez ids to gene names

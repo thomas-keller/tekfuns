@@ -2,12 +2,14 @@
 % Please edit documentation in R/enrich_figs.R
 \name{rnaplots}
 \alias{rnaplots}
-\title{Title}
+\title{automagically make a bunch of standard deseq2 and clusterprofiler plots}
 \usage{
-rnaplots(dds, folder = NULL, fprefix = NULL)
+rnaplots(dds, pcut = 0.05, folder = NULL, fprefix = NULL)
 }
 \arguments{
 \item{dds}{DESeqDataset object}
+
+\item{pcut}{gsea pvalue threshold}
 
 \item{folder}{output result folder}
 
@@ -17,7 +19,7 @@ rnaplots(dds, folder = NULL, fprefix = NULL)
 list of plots
 }
 \description{
-Title
+automagically make a bunch of standard deseq2 and clusterprofiler plots
 }
 \examples{
 todo
