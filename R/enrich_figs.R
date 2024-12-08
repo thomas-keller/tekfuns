@@ -113,7 +113,6 @@ rnaplots <- function(dds,folder=NULL,fprefix=NULL){
   #rename x and y labels
   p=p+ggplot2::xlab("gene symbol")+ggplot2::ylab("log10 counts")
   rres$top20dot=p
-  print('got here')
 
   #now to enrich plots
   fc=res05$log2FoldChange
@@ -124,13 +123,13 @@ rnaplots <- function(dds,folder=NULL,fprefix=NULL){
   m_t2g <- msigdbr::msigdbr(species = "Homo sapiens", category = "H") %>%
     dplyr::select(gs_name, entrez_gene)
 
-  m_t2g$gs_name=str_remove(m_t2g$gs_name,"HALLMARK_")
-  m_t2g$gs_name=str_remove(m_t2g$gs_name,"HALLMARK ")
+  m_t2g$gs_name=stringr::str_remove(m_t2g$gs_name,"HALLMARK_")
+  m_t2g$gs_name=stringr::str_remove(m_t2g$gs_name,"HALLMARK ")
   #replace the underscores with spaces to make wrapping easier
-  m_t2g$gs_name=str_replace_all(m_t2g$gs_name,"_"," ")
+  m_t2g$gs_name=stringr::str_replace_all(m_t2g$gs_name,"_"," ")
 
   set.seed(1234)
-
+  print('got here')
   #GSEA function takes minimum two arguments; the fold-change values, and the pathway-gene database
   #if you take a look at the m_t2g dataframe we constructed from msigdbr, its has two columns, one with the pathway name (gs_name)
   #and one with the gene id (entrez_gene)
