@@ -100,7 +100,7 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
   row.names(anno) <- colnames(mat)
   p=pheatmap::pheatmap(mat,annotation_col=anno)
   rres$heatmap=p
-
+  coldata=as.data.frame(colData(vsd))
   #gene dotplot
   tmat=SummarizedExperiment::assay(dds)
   tmat=tmat[row.names(tmat) %in% row.names(resv),]
