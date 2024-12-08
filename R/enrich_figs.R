@@ -139,7 +139,7 @@ rnaplots <- function(dds,folder=NULL,fprefix=NULL){
   greso=gres
   #use setReadable to convert entrez ids to gene names
   gres=clusterProfiler::setReadable(gres,OrgDb=org.Hs.eg.db::org.Hs.eg.db,keyType="ENTREZID")
-
+  print('past gsea')
 
   p=dotplot(gres,x='NES')
 
