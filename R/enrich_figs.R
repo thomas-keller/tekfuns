@@ -57,6 +57,11 @@ rnaplots <- function(dds,folder=NULL,fprefix=NULL){
   res05 <- na.omit(res)
   res05 <-as.data.frame(res05)
   res05 <- dplyr::filter(res05,padj<=0.05)
+  res05$ens=rownames(res05)
+  ens=res05$ens
+  res05$symbol <- AnnotationDbi::mapIds(org.Hs.eg.db::org.Hs.eg.db, keys = ens, column = c('SYMBOL'), keytype = 'ENSEMBL')
+  res05$entrez <- AnnotationDbi::mapIds(org.Hs.eg.db::org.Hs.eg.db, keys = ens,column = c('ENTREZID'),
+                         keytype = 'ENSEMBL')
   rres$res05
   vsd=DESeq2::vst(dds,blind=TRUE)
   #pca
@@ -126,12 +131,10 @@ rnaplots <- function(dds,folder=NULL,fprefix=NULL){
   m_t2g$gs_name=stringr::str_remove(m_t2g$gs_name,"HALLMARK_")
   m_t2g$gs_name=stringr::str_remove(m_t2g$gs_name,"HALLMARK ")
   #replace the underscores with spaces to make wrapping easier
-  print(dim(m_t2g))
   m_t2g$gs_name=stringr::str_replace_all(m_t2g$gs_name,"_"," ")
   print(head(m_t2g))
   set.seed(1234)
-  print(head(fc))
-  print(head(m_t2g))
+
   #GSEA function takes minimum two arguments; the fold-change values, and the pathway-gene database
   #if you take a look at the m_t2g dataframe we constructed from msigdbr, its has two columns, one with the pathway name (gs_name)
   #and one with the gene id (entrez_gene)
@@ -141,7 +144,6 @@ rnaplots <- function(dds,folder=NULL,fprefix=NULL){
   greso=gres
   #use setReadable to convert entrez ids to gene names
   gres=clusterProfiler::setReadable(gres,OrgDb=org.Hs.eg.db::org.Hs.eg.db,keyType="ENTREZID")
-  print('past gsea')
 
   p=dotplot(gres,x='NES')
 

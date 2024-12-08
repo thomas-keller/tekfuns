@@ -21,4 +21,5 @@ Imports:
     ggplot2,
     tidyr,
     org.Hs.eg.db,
-    stringr
+    stringr,
+    AnnotationDbi
