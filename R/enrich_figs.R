@@ -189,8 +189,7 @@ rnaplots <- function(dds,pcut=0.05,folder=NULL,fprefix=NULL){
     dev.off()
     fname=glue::glue("./{folder}/{fprefix}_dispest.pdf")
     pdf(fname,width=7,height=7)
-    grid::grid.newpage()
-    grid::grid.draw(DESeq2::plotDispEsts(dds))
+    DESeq2::plotDispEsts(dds)
     dev.off()
   }
 
