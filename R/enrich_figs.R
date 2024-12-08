@@ -38,7 +38,7 @@ cnetfilt <- function(gse,fcut=2.0,showcat=4){
 #'
 #' @examples todo
 rnaplots <- function(dds,folder=NULL,fprefix=NULL){
-  if(folder){
+  if(!is.null(folder)){
     dir_create(folder)
   }
   rres=list()
