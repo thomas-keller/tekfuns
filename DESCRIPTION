@@ -1,0 +1,23 @@
+Package: tekfuns
+Title: convenience functions mainly related to rnaseq and enrichment results from clusterProfiler and DESeq2
+Version: 0.0.0.9000
+Authors@R: 
+    person("Thomas", "Keller", , "thomas.e.keller@gmail.com", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0002-6349-0401"))
+Description: For now, just a few methods  to expedite common rnaseq figures from DESeq2 and clusterProfiler. 
+License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
+    license
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Imports: 
+    clusterProfiler,
+    DESeq2,
+    enrichplot,
+    fs,
+    glue,
+    msigdbr,
+    dplyr,
+    ggplot2,
+    tidyr,
+    org.Hs.eg.db
