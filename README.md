@@ -32,5 +32,7 @@ cf=cnetfilter(gse,fcut=1.5)
 #rnaplots will do the rest
 #bundle of deseq and clusterprofiler plots
 rp=rnaplots(dds,folder='exfolder',fprefix='exres')
+#fcut and pcut are options now, for adjust cnetfilt and gsea, respectively
+rp=rnaplots(dds,fcut=1.5,pcut=.1,folder='exfolder',fprefix='exres')
 ```
 
