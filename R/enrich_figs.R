@@ -68,8 +68,7 @@ rnaplots <- function(dds,folder=NULL,fprefix=NULL){
   p=DESeq2::plotPCA(vsd,intgroup="condition")
   rres$pca=p
   #dispersal estimate
-  p=DESeq2::plotDispEsts(dds)
-  rres$disp=p
+  #its a base R plot, move to end
   #volcano
   p=EnhancedVolcano::EnhancedVolcano(res05,
                                    lab = res05$symbol,
@@ -186,6 +185,11 @@ rnaplots <- function(dds,folder=NULL,fprefix=NULL){
     pdf(fname,width=7,height=7)
     grid::grid.newpage()
     grid::grid.draw(rres$heatmap$gtable)
+    dev.off()
+    fname=glue::glue("./{folder}/{fprefix}_dispest.pdf")
+    pdf(fname,width=7,height=7)
+    grid::grid.newpage()
+    grid::grid.draw(DESeq2::plotDispEsts(dds))
     dev.off()
   }
 
