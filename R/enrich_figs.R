@@ -83,8 +83,8 @@ rnaplots <- function(dds,folder=NULL,fprefix=NULL){
   rres$volc=p
 
   #heatmap
-  topVarGenes <- head(order(rowVars(DESeq2::assay(vsd)), decreasing = TRUE), 20)
-  mat  <- DESeq2::assay(vsd)[ topVarGenes, ]
+  topVarGenes <- head(order(rowVars(SummarizedExperiment::assay(vsd)), decreasing = TRUE), 20)
+  mat  <- SummarizedExperiment::assay(vsd)[ topVarGenes, ]
   mat  <- mat - rowMeans(mat)
   resv=res05[row.names(mat),]
 
@@ -98,7 +98,7 @@ rnaplots <- function(dds,folder=NULL,fprefix=NULL){
   rres$heatmap=p
 
   #gene dotplot
-  tmat=DESeq2::assay(dds)[row.names(resv),]
+  tmat=SummarizedExperiment::assay(dds)[row.names(resv),]
   row.names(tmat)=resv$symbol
   tmatd=as.data.frame(tmat)
   tmatd$symbol=row.names(tmatd)
