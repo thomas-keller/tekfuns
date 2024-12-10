@@ -89,7 +89,7 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
   rres$volc=p
 
   #heatmap
-  topfce <- res05$ens[1:50]
+  topfce <- res05$ens[1:30]
   mat  <- SummarizedExperiment::assay(vsd)
   mat  <- mat[row.names(mat) %in% topfce, ]
   #do z scale
@@ -101,6 +101,7 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
   #add rownames to anno so they match the column names from the expression matrix
   #this is needed so that the two dataframes can be matched up
   row.names(anno) <- colnames(mat)
+  row.names(mat)<-res05$symbol[1:30]
   p=pheatmap::pheatmap(mat,annotation_col=anno)
   rres$heatmap=p
   coldata=as.data.frame(colData(vsd))
@@ -184,7 +185,7 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
     fname=glue::glue("./{folder}/{fprefix}_volc.pdf")
     ggplot2::ggsave(fname,plot=rres$volc,width=7,height=7)
     fname=glue::glue("./{folder}/{fprefix}_top20dot.pdf")
-    ggplot2::ggsave(fname,plot=rres$top20dot,width=7,height=7)
+    ggplot2::ggsave(fname,plot=rres$top20dot,width=7,height=10)
     fname=glue::glue("./{folder}/{fprefix}_heat.pdf")
     pdf(fname,width=7,height=7)
     grid::grid.newpage()
