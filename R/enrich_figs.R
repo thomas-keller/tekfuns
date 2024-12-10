@@ -92,7 +92,8 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
   topfce <- res05$ens[1:50]
   mat  <- SummarizedExperiment::assay(vsd)
   mat  <- mat[row.names(mat) %in% topfce, ]
-  mat  <- mat - rowMeans(mat)
+  #do z scale
+  mat <- t(scale(t(mat)))
   resv=res05[row.names(res05) %in% row.names(mat),]
   #row.names(mat)=resv$symbol
   anno <- as.data.frame(colData(vsd)[, c("condition")])
