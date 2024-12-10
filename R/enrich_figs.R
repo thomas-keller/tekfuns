@@ -58,6 +58,7 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
   res05 <- na.omit(res)
   res05 <-as.data.frame(res05)
   res05 <- dplyr::filter(res05,padj<=0.05)
+  res05 <- dplyr::arrange(res05,desc(abs(log2FoldChange)))
   res05$ens=rownames(res05)
   ens=res05$ens
   res05$symbol <- AnnotationDbi::mapIds(org.Hs.eg.db::org.Hs.eg.db, keys = ens, column = c('SYMBOL'), keytype = 'ENSEMBL')
@@ -88,8 +89,9 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
   rres$volc=p
 
   #heatmap
-  topVarGenes <- head(order(rowVars(SummarizedExperiment::assay(vsd)), decreasing = TRUE), 20)
-  mat  <- SummarizedExperiment::assay(vsd)[ topVarGenes, ]
+  topfce <- res05$ens[1:50]
+  mat  <- SummarizedExperiment::assay(vsd)
+  mat  <- mat[row.names(mat) %in% topfce, ]
   mat  <- mat - rowMeans(mat)
   resv=res05[row.names(res05) %in% row.names(mat),]
   #row.names(mat)=resv$symbol
@@ -103,8 +105,8 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
   coldata=as.data.frame(colData(vsd))
   #gene dotplot
   tmat=SummarizedExperiment::assay(dds)
-  tmat=tmat[row.names(tmat) %in% row.names(resv),]
-  sym=as.vector(resv[row.names(tmat),'symbol'])
+  tmat=tmat[row.names(tmat) %in% topfce[1:20],]
+  sym=res05$symbol[1:20]
   #row.names(tmat)=resv$symbol
   tmatd=as.data.frame(tmat)
   tmatd$symbol=sym
