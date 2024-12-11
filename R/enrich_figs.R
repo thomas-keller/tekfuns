@@ -117,7 +117,7 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
   coldata=as.data.frame(colData(vsd))
   #gene dotplot
   tmat=DESeq2::counts(dds,normalized=TRUE)
-  tmat=tmat[row.names(tmat) %in% topfce[1:30],]
+  tmat=tmat[row.names(tmat) %in% topg[1:30],]
   sym=res05$csymbol[1:30]
   #row.names(tmat)=resv$symbol
   tmatd=as.data.frame(tmat)
@@ -132,7 +132,7 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
   p=p+ggplot2::scale_y_log10()
   #rename x and y labels
   p=p+ggplot2::xlab("gene symbol")+ggplot2::ylab("log10 counts")
-  rres$top20dot=p
+  rres$topgdot=p
   #now to enrich plots
   fc=res05$log2FoldChange
   names(fc)=res05$entrez
@@ -194,8 +194,8 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
     ggplot2::ggsave(fname,plot=rres$disp,width=7,height=7)
     fname=glue::glue("./{folder}/{fprefix}_volc.pdf")
     ggplot2::ggsave(fname,plot=rres$volc,width=7,height=7)
-    fname=glue::glue("./{folder}/{fprefix}_top20dot.pdf")
-    ggplot2::ggsave(fname,plot=rres$top20dot,width=7,height=7)
+    fname=glue::glue("./{folder}/{fprefix}_topgdot.pdf")
+    ggplot2::ggsave(fname,plot=rres$topgdot,width=7,height=7)
     fname=glue::glue("./{folder}/{fprefix}_heat.pdf")
     pdf(fname,width=7,height=12)
     grid::grid.newpage()
