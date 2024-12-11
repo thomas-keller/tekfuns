@@ -116,7 +116,7 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
   rres$heatmap=p
   coldata=as.data.frame(colData(vsd))
   #gene dotplot
-  tmat=DEseq2::counts(dds,normalized=TRUE)
+  tmat=DESeq2::counts(dds,normalized=TRUE)
   tmat=tmat[row.names(tmat) %in% topfce[1:30],]
   sym=res05$csymbol[1:30]
   #row.names(tmat)=resv$symbol
