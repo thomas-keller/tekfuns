@@ -58,12 +58,14 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
   res05 <- na.omit(res)
   res05 <-as.data.frame(res05)
   res05 <- dplyr::filter(res05,padj<=0.05)
-  res05 <- dplyr::arrange(res05,desc(abs(log2FoldChange)))
+  #res05 <- dplyr::arrange(res05,desc(abs(log2FoldChange)))
+  res05 <- dplyr::arange(res05,padj)
   res05$ens=rownames(res05)
   ens=res05$ens
   res05$symbol <- AnnotationDbi::mapIds(org.Hs.eg.db::org.Hs.eg.db, keys = ens, column = c('SYMBOL'), keytype = 'ENSEMBL')
   res05$entrez <- AnnotationDbi::mapIds(org.Hs.eg.db::org.Hs.eg.db, keys = ens,column = c('ENTREZID'),
                          keytype = 'ENSEMBL')
+  res05$csymbol=ifelse(is.na(res05$symbol),res05$ensembl,res05$symbol)
   rres$res05=res05
   vsd=DESeq2::vst(dds,blind=TRUE)
   #pca
@@ -73,7 +75,7 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
   #its a base R plot, move to end
   #volcano
   p=EnhancedVolcano::EnhancedVolcano(res05,
-                                   lab = res05$symbol,
+                                   lab = res05$csymbol,
                                    x = 'log2FoldChange',y = 'pvalue',pCutoff = 10e-12, title = NULL,
                                    FCcutoff = 1.5,
                                    subtitle=NULL,
@@ -89,26 +91,34 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
   rres$volc=p
 
   #heatmap
-  topfce <- res05$ens[1:30]
+  #res05 arranged by padj now
+  topg <- res05$ens[1:30]
   mat  <- SummarizedExperiment::assay(vsd)
-  mat  <- mat[row.names(mat) %in% topfce, ]
+  #mat  <- mat[row.names(mat) %in% topg, ]
   #do z scale
   mat <- t(scale(t(mat)))
-  resv=res05[row.names(res05) %in% row.names(mat),]
+  #resv=res05[row.names(res05) %in% row.names(mat),]
   #row.names(mat)=resv$symbol
   anno <- as.data.frame(colData(vsd)[, c("condition")])
   colnames(anno) <- "condition"
   #add rownames to anno so they match the column names from the expression matrix
   #this is needed so that the two dataframes can be matched up
   row.names(anno) <- colnames(mat)
-  row.names(mat)<-res05$symbol[1:30]
-  p=pheatmap::pheatmap(mat,annotation_col=anno)
+  #row.names(mat)<-res05$csymbol[1:30]
+  #0 point not always white, how to force:
+  #thanks https://stackoverflow.com/questions/31677923/set-0-point-for-pheatmap-in-r
+  cols <- RColorBrewer::brewer.pal(10, "BuGn")
+  plen<-50
+  cols<- grDevices::colorRampPalette(cols)(plen)
+  myBreaks <- c(seq(min(mat), 0, length.out=ceiling(plen/2) + 1),
+                seq(max(mat)/paletteLength, max(mat), length.out=floor(plen/2)))
+  p=pheatmap::pheatmap(mat,annotation_col=anno,scale='row',show_rownames=FALSE,silent=TRUE,breaks=myBreaks,color=cols)
   rres$heatmap=p
   coldata=as.data.frame(colData(vsd))
   #gene dotplot
-  tmat=SummarizedExperiment::assay(dds)
-  tmat=tmat[row.names(tmat) %in% topfce[1:20],]
-  sym=res05$symbol[1:20]
+  tmat=SummarizedExperiment::counts(dds,normalized=TRUE)
+  tmat=tmat[row.names(tmat) %in% topfce[1:30],]
+  sym=res05$csymbol[1:30]
   #row.names(tmat)=resv$symbol
   tmatd=as.data.frame(tmat)
   tmatd$symbol=sym
@@ -187,7 +197,7 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
     fname=glue::glue("./{folder}/{fprefix}_top20dot.pdf")
     ggplot2::ggsave(fname,plot=rres$top20dot,width=7,height=10)
     fname=glue::glue("./{folder}/{fprefix}_heat.pdf")
-    pdf(fname,width=7,height=7)
+    pdf(fname,width=7,height=12)
     grid::grid.newpage()
     grid::grid.draw(rres$heatmap$gtable)
     dev.off()

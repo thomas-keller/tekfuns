@@ -22,4 +22,6 @@ Imports:
     tidyr,
     org.Hs.eg.db,
     stringr,
-    AnnotationDbi
+    AnnotationDbi,
+    RColorBrewer,
+    grDevices
