@@ -126,7 +126,7 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
   expr_long=dplyr::inner_join(expr_long,coldata)
   expr_long$expression=expr_long$expression+1
   p=ggplot2::ggplot(expr_long,aes(x=symbol,y=expression,colour=condition))+geom_point()
-  p=p+ggplot2::scale_x_discrete(guide=guide_axis(n.dodge=2))
+  p=p+ggplot2::scale_x_discrete(guide=guide_axis(n.dodge=3))
   p=p+ggplot2::theme_bw()
   #convert y axis to log scale since values range over orders of magnitude
   p=p+ggplot2::scale_y_log10()
