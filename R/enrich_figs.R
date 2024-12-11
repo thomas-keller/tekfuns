@@ -65,7 +65,7 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
   res05$symbol <- AnnotationDbi::mapIds(org.Hs.eg.db::org.Hs.eg.db, keys = ens, column = c('SYMBOL'), keytype = 'ENSEMBL')
   res05$entrez <- AnnotationDbi::mapIds(org.Hs.eg.db::org.Hs.eg.db, keys = ens,column = c('ENTREZID'),
                          keytype = 'ENSEMBL')
-  res05$csymbol=ifelse(is.na(res05$symbol),res05$ensembl,res05$symbol)
+  res05$csymbol=ifelse(is.na(res05$symbol),res05$ens,res05$symbol)
   rres$res05=res05
   vsd=DESeq2::vst(dds,blind=TRUE)
   #pca
