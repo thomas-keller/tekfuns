@@ -107,7 +107,7 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
   #row.names(mat)<-res05$csymbol[1:30]
   #0 point not always white, how to force:
   #thanks https://stackoverflow.com/questions/31677923/set-0-point-for-pheatmap-in-r
-  cols <- RColorBrewer::brewer.pal(10, "BuGn")
+  cols <- RColorBrewer::brewer.pal(10, "Spectral")
   plen<-50
   cols<- grDevices::colorRampPalette(cols)(plen)
   myBreaks <- c(seq(min(mat), 0, length.out=ceiling(plen/2) + 1),
