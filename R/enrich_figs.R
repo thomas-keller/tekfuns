@@ -110,7 +110,8 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
   cols <- RColorBrewer::brewer.pal(10, "Spectral")
   plen<-50
   cols<- grDevices::colorRampPalette(rev(cols))(plen)
-  mat=mat[1:50,]
+  mat=mat[1:30,]
+  row.names(mat)=res05$csymbol
   myBreaks <- c(seq(min(mat), 0, length.out=ceiling(plen/2) + 1),
                 seq(max(mat)/plen, max(mat), length.out=floor(plen/2)))
   p=pheatmap::pheatmap(mat,annotation_col=anno,scale='row',show_rownames=FALSE,silent=TRUE,breaks=myBreaks,color=cols)
