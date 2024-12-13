@@ -232,7 +232,7 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
     grid::grid.draw(rres$heatmap$gtable)
     dev.off()
     fname=glue::glue("./{folder}/{fprefix}_dispest.pdf")
-    pdf(fname,width=7,height=10,units='in')
+    png(fname,width=7,height=10,units='in')
     DESeq2::plotDispEsts(dds)
     dev.off()
   }
