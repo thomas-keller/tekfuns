@@ -67,7 +67,7 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
                          keytype = 'ENSEMBL')
   res05$csymbol=ifelse(is.na(res05$symbol),res05$ens,res05$symbol)
   rres$res05=res05
-  vsd=DESeq2::vst(dds,blind=TRUE)
+  vsd=DESeq2::vst(dds,blind=FALSE)
   #pca
   p=DESeq2::plotPCA(vsd,intgroup="condition")
   rres$pca=p
@@ -140,6 +140,9 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
   fc=res05$log2FoldChange
   names(fc)=res05$entrez
   fc=sort(fc,decreasing=TRUE)
+  fc=fc[!is.na(names(fc))]
+  fc=fc[!duplicated(names(fc))]
+
 
   m_df <- msigdbr::msigdbr(species = "Homo sapiens")
   m_t2g <- msigdbr::msigdbr(species = "Homo sapiens", category = "H") %>%
