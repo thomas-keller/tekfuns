@@ -204,7 +204,7 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
     ggplot2::ggsave(fname,plot=rres$topgdot,width=7,height=7)
     fname=glue::glue("./{folder}/{fprefix}_heat.pdf")
     pdf(fname,width=7,height=12)
-    #grid::grid.newpage()
+    grid::grid.newpage()
     grid::grid.draw(rres$heatmap$gtable)
     dev.off()
     fname=glue::glue("./{folder}/{fprefix}_dispest.pdf")
