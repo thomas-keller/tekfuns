@@ -115,7 +115,7 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
   row.names(mat)=res05$csymbol[1:30]
   myBreaks <- c(seq(min(mat), 0, length.out=ceiling(plen/2) + 1),
                 seq(max(mat)/plen, max(mat), length.out=floor(plen/2)))
-  p=pheatmap::pheatmap(mat,annotation_col=anno,scale='row',show_rownames=FALSE,silent=TRUE,breaks=myBreaks,color=cols)
+  p=pheatmap::pheatmap(mat,annotation_col=anno,scale='row',silent=TRUE,breaks=myBreaks,color=cols)
   rres$heatmap=p
   coldata=as.data.frame(colData(vsd))
   #gene dotplot
