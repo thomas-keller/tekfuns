@@ -109,7 +109,7 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
   #thanks https://stackoverflow.com/questions/31677923/set-0-point-for-pheatmap-in-r
   cols <- RColorBrewer::brewer.pal(10, "Spectral")
   plen<-50
-  cols<- grDevices::colorRampPalette(cols)(plen)
+  cols<- grDevices::colorRampPalette(rev(cols))(plen)
   mat=mat[1:50,]
   myBreaks <- c(seq(min(mat), 0, length.out=ceiling(plen/2) + 1),
                 seq(max(mat)/plen, max(mat), length.out=floor(plen/2)))
