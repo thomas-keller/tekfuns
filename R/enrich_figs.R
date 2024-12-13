@@ -84,8 +84,8 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
                                    pointSize = 1.0,
                                    labSize = 3.0,
                                    colAlpha = 1,
-                                   legendLabels=c('Not sig.','Log (base 2) FC','p-value','p-value & Log (base 2) FC'),
-                                   legendPosition = 'right',
+                                   legendLabels=c('Not sig.','Log2 FC','p-value','p-value & Log2 FC'),
+                                   legendPosition = 'bottom',
                                    legendLabSize = 10,
                                    legendIconSize = 5.0)
   rres$volc=p
