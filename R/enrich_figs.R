@@ -96,6 +96,7 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
   mat  <- SummarizedExperiment::assay(vsd)
   #mat  <- mat[row.names(mat) %in% topg, ]
   #do z scale
+  mat=mat[row.names(mat) %in% topg,]
   mat <- t(scale(t(mat)))
   #resv=res05[row.names(res05) %in% row.names(mat),]
   #row.names(mat)=resv$symbol
