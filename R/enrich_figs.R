@@ -271,11 +271,11 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
   if(length(gr)>0){
     hl=c(hl,gr)
   }
-  pi=gostplot(gostres, capped = TRUE, interactive = TRUE)
+  pi=gprofiler2::gostplot(gostres, capped = TRUE, interactive = TRUE)
   rres$gp=pi
   #p=gostplot(gostres, capped = TRUE, interactive = FALSE)
   #rres$gp2=p
-  pp <- publish_gostplot(pi, highlight_terms = hl,
+  pp <- gprofiler2::publish_gostplot(pi, highlight_terms = hl,
                          width = NA, height = NA, filename = NULL )
   rres$g2=pp
   if(!is.null(fprefix) & !is.null(folder)){
