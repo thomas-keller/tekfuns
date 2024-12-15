@@ -212,7 +212,7 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
   greso=gres
   #use setReadable to convert entrez ids to gene names
   gres=clusterProfiler::setReadable(gres,OrgDb=org.Hs.eg.db::org.Hs.eg.db,keyType="ENTREZID")
-
+  gres2=clusterProfiler::setReadable(gres2,OrgDb=org.Hs.eg.db::org.Hs.eg.db,keyType="ENTREZID")
   p=enrichplot::dotplot(gres,x='NES')
 
   p=p+ggplot2::scale_y_discrete(labels=function(x) stringr::str_wrap(x,width=40))
@@ -282,10 +282,14 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
   if(!is.null(fprefix) & !is.null(folder)){
     fname=glue::glue("./{folder}/{fprefix}_res05.csv")
     readr::write_csv(rres$res05,fname)
-    fname=glue::glue("./{folder}/{fprefix}_gres.csv")
-    readr::write_csv(as.data.frame(rres$comph),fname)
+    fname=glue::glue("./{folder}/{fprefix}_gresH.csv")
+    readr::write_csv(as.data.frame(rres$gres),fname)
+    fname=glue::glue("./{folder}/{fprefix}_gresC2.csv")
+    readr::write_csv(as.data.frame(rres$gres2),fname)
     fname=glue::glue("./{folder}/{fprefix}_gprof.pdf")
     ggplot2::ggsave(fname,plot=rres$g2,width=7,height=10)
+    fname=glue::glue("./{folder}/{fprefix}_comph.pdf")
+    ggplot2::ggsave(fname,plot=rres$comph,width=7,height=10)
     fname=glue::glue("./{folder}/{fprefix}_comph.pdf")
     ggplot2::ggsave(fname,plot=rres$compc2,width=7,height=10)
     fname=glue::glue("./{folder}/{fprefix}_compc2.pdf")
