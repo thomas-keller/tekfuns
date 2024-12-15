@@ -263,11 +263,11 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
   rres$compc2=p
   gpres=gprofiler2::gost(query=enl,organism='hsapiens',ordered_query=T,multi_query=TRUE,evcodes=TRUE)
   hl=c()
-  gr=gpres %>% filter(source=='GO:BP') %>% pull(term_id)
+  gr=gpres$result %>% filter(source=='GO:BP') %>% pull(term_id)
   if(length(gr)>0){
     hl=c(hl,gr)
   }
-  gr=gpres %>% filter(source=='REAC') %>% pull(term_id)
+  gr=gpres$result %>% filter(source=='REAC') %>% pull(term_id)
   if(length(gr)>0){
     hl=c(hl,gr)
   }
