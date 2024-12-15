@@ -140,8 +140,8 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
     fc=sort(desc(fc))
     fc=fc[!is.na(names(fc))]
     ens=df$ens
-    print(ens)
-    print(fc)
+    #print(ens)
+    #print(fc)
     fcl[[cname]]=fc
     enl[[cname]]=ens
 
@@ -179,7 +179,7 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
   fc=fc[!is.na(names(fc))]
   fc=fc[!duplicated(names(fc))]
 
-  fcc=list(cluster_1=)
+
 
 
   m_df <- msigdbr::msigdbr(species = "Homo sapiens")
