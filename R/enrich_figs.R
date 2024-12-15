@@ -271,7 +271,7 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
   if(length(gr)>0){
     hl=c(hl,gr)
   }
-  pi=gprofiler2::gostplot(gostres, capped = TRUE, interactive = TRUE)
+  pi=gprofiler2::gostplot(gpres, capped = TRUE, interactive = TRUE)
   rres$gp=pi
   #p=gostplot(gostres, capped = TRUE, interactive = FALSE)
   #rres$gp2=p
