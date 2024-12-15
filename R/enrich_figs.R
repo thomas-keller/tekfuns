@@ -261,15 +261,15 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
   p$data$.sign=factor(p$data$.sign,c("Up-reg.","Down-reg."),ordered=T)
   p=p+xlab("Cluster")
   rres$compc2=p
-  gpres=gprofiler2::gost(query=enl,organism='hsapiens',ordered_query=T,multi_query=TRUE)
+  gpres=gprofiler2::gost(query=enl,organism='hsapiens',ordered_query=T,multi_query=TRUE,source=c("GO",'KEGG','REAC','CORUM'))
   hl=c()
   gr=gpres$result %>% filter(source=='GO:BP') %>% pull(term_id)
   if(length(gr)>0){
-    hl=c(hl,gr)
+    hl=c(hl,gr[1:3])
   }
   gr=gpres$result %>% filter(source=='REAC') %>% pull(term_id)
   if(length(gr)>0){
-    hl=c(hl,gr)
+    hl=c(hl,gr[1:3])
   }
   pi=gprofiler2::gostplot(gpres, capped = TRUE, interactive = TRUE)
   rres$gp=pi
@@ -278,7 +278,7 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
   p=gprofiler2::gostplot(gpres, capped = TRUE, interactive = FALSE)
   pp <- gprofiler2::publish_gostplot(p, highlight_terms = hl,
                          width = NA, height = NA, filename = NULL )
-  rres$g2=pp
+  rres$gp2=pp
   if(!is.null(fprefix) & !is.null(folder)){
     fname=glue::glue("./{folder}/{fprefix}_res05.csv")
     readr::write_csv(rres$res05,fname)
