@@ -56,7 +56,8 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
   #extract the results
   reso <- DESeq2::results(dds,alpha=.05)
   #will automatically use last coef in regression
-
+  rname=resultsNames(dds)
+  lrn=rname[length(rname)]
   res=DESeq2::lfcShrink(dds,res=reso,coef=lrn)
   res$unslfc=reso$log2FoldChange
   #do some cleaning and filter out nonsignificant genes
