@@ -43,7 +43,8 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
     dir_create(folder)
   }
   rres=list()
-
+  rname=resultsNames(dds)
+  lrn=rname[length(rname)]
   #filter out genes with low reads
   smallestGroupSize <- 3
   keep <- rowSums(counts(dds) >= 10) >= smallestGroupSize
@@ -53,7 +54,11 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
   dds<-DESeq2::DESeq(dds)
 
   #extract the results
-  res <- DESeq2::results(dds)
+  reso <- DESeq2::results(dds,alpha=.05)
+  #will automatically use last coef in regression
+
+  res=DESeq2::lfcShrink(dds,res=reso,coef=lrn)
+  res$unslfc=reso$log2FoldChange
   #do some cleaning and filter out nonsignificant genes
   res05 <- na.omit(res)
   res05 <-as.data.frame(res05)
@@ -61,6 +66,7 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
   #res05 <- dplyr::arrange(res05,desc(abs(log2FoldChange)))
   res05 <- dplyr::arrange(res05,padj)
   res05$ens=rownames(res05)
+  res05$lprank=res05$lfcs*res05$pvalue
   ens=res05$ens
   res05$symbol <- AnnotationDbi::mapIds(org.Hs.eg.db::org.Hs.eg.db, keys = ens, column = c('SYMBOL'), keytype = 'ENSEMBL')
   res05$entrez <- AnnotationDbi::mapIds(org.Hs.eg.db::org.Hs.eg.db, keys = ens,column = c('ENTREZID'),
@@ -94,9 +100,10 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
   #res05 arranged by padj now
   topg <- res05$ens[1:30]
   mat  <- SummarizedExperiment::assay(vsd)
+  mat<-mat[row.names(mat) %in% res05$ens,]
   #mat  <- mat[row.names(mat) %in% topg, ]
   #do z scale
-  mat=mat[row.names(mat) %in% topg,]
+  #mat=mat[row.names(mat) %in% topg,]
   mat <- t(scale(t(mat)))
   #resv=res05[row.names(res05) %in% row.names(mat),]
   #row.names(mat)=resv$symbol
@@ -111,11 +118,37 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
   cols <- RColorBrewer::brewer.pal(10, "Spectral")
   plen<-50
   cols<- grDevices::colorRampPalette(rev(cols))(plen)
-  mat=mat[1:30,]
-  row.names(mat)=res05$csymbol[1:30]
+  #mat=mat[1:30,]
+  #row.names(mat)=res05$csymbol[1:30]
   myBreaks <- c(seq(min(mat), 0, length.out=ceiling(plen/2) + 1),
                 seq(max(mat)/plen, max(mat), length.out=floor(plen/2)))
-  p=pheatmap::pheatmap(mat,annotation_col=anno,scale='row',silent=TRUE,breaks=myBreaks,color=cols)
+
+  #start with 4 clusters
+  #cluster the whole expression
+  cl=cutree(hclust(dist(mat)),4)
+  canno=data.frame(cluster=paste("Cluster",cl,sep=" "))
+  rownames(canno)<-rownames(mat)
+  fcl=list()
+  enl=list()
+  for(i in 1:4){
+    df=res05[cl==i,]
+    df = df %>% arrange(pvalue)
+    cname=paste('Cluster',i)
+    fc=df$log2FoldChange
+    names(fc)=df$entrez
+    fc=sort(desc(fc))
+    fc=fc[!is.na(names(fc))]
+    ens=df$ens
+    fcl[[cname]]=fc
+    enl[[cname]]=ens
+
+
+  }
+
+
+
+
+  p=pheatmap::pheatmap(mat,annotation_col=anno,annotation_row=canno,treeheight_row=0,treeheight_col=0,silent=TRUE,breaks=myBreaks,color=cols,show_rownames=F)
   rres$heatmap=p
   coldata=as.data.frame(colData(vsd))
   #gene dotplot
@@ -143,6 +176,8 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
   fc=fc[!is.na(names(fc))]
   fc=fc[!duplicated(names(fc))]
 
+  fcc=list(cluster_1=)
+
 
   m_df <- msigdbr::msigdbr(species = "Homo sapiens")
   m_t2g <- msigdbr::msigdbr(species = "Homo sapiens", category = "H") %>%
@@ -153,11 +188,23 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
   m_t2g$gs_name=stringr::str_replace_all(m_t2g$gs_name,"_"," ")
   set.seed(1234)
 
+  m_t2g <- msigdbr::msigdbr(species = "Homo sapiens", category = "H") %>%
+    dplyr::select(gs_name, entrez_gene)
+  m_t2g$gs_name=stringr::str_remove(m_t2g$gs_name,"HALLMARK_")
+  m_t2g$gs_name=stringr::str_remove(m_t2g$gs_name,"HALLMARK ")
+  #replace the underscores with spaces to make wrapping easier
+  m_t2g$gs_name=stringr::str_replace_all(m_t2g$gs_name,"_"," ")
+
+  #try c2 as well for more fine grained (also potentially redundant) curated pathways
+  m2_t2g <- msigdbr::msigdbr(species = "Homo sapiens", category = "C2") %>%
+    dplyr::select(gs_name, entrez_gene)
+  m2_t2g$gs_name=stringr::str_replace_all(m2_t2g$gs_name,"_"," ")
   #GSEA function takes minimum two arguments; the fold-change values, and the pathway-gene database
   #if you take a look at the m_t2g dataframe we constructed from msigdbr, its has two columns, one with the pathway name (gs_name)
   #and one with the gene id (entrez_gene)
 
   gres=clusterProfiler::GSEA(fc,TERM2GENE=m_t2g,pvalueCutoff=pcut)
+  gres2=clusterProfiler::GSEA(fc,TERM2GENE=m2_t2g,pvalueCutoff=pcut)
   #only use original enrich result for filtering genes with cnetfilt
   greso=gres
   #use setReadable to convert entrez ids to gene names
@@ -170,7 +217,16 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
   #you can use xlab and ylab for this if its a ggplot
   p=p+ggplot2::xlab("Normalized Enrichment Score")
   p=p+ggplot2::theme_bw()
-  rres$endot=p
+  rres$endoth=p
+
+  p=enrichplot::dotplot(gres2,x='NES')
+
+  p=p+ggplot2::scale_y_discrete(labels=function(x) stringr::str_wrap(x,width=40))
+  # next, lets make the x axis label more descriptive
+  #you can use xlab and ylab for this if its a ggplot
+  p=p+ggplot2::xlab("Normalized Enrichment Score")
+  p=p+ggplot2::theme_bw()
+  rres$endotc2=p
 
   p=cnetfilt(greso,fcut)
   rres$cnetfilt=p
@@ -183,12 +239,58 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
   #cant be blank
   rres$gres=gres
   rres$fc=fc
+
+  rres$fcl=fcl
+  rres$enl=enl
+  cores=compareCluster(geneCluster=fcl,fun="GSEA",TERM2GENE=m_t2g,nPermSimple=10000,seed=42,pvalueCutoff=.1)
+  #something overwrote the enrichplot dotplot, gives error unless prefix
+  p=enrichplot::dotplot(cores,split='.sign')+facet_grid(~.sign)+scale_x_discrete(guide=guide_axis(n.dodge=2))
+  #kind of hacky way to rename the facets from activated/supresed to up/down reg
+  p$data$.sign=ifelse(p$data$.sign=='activated','Up-reg.','Down-reg.')
+  p$data$.sign=factor(p$data$.sign,c("Up-reg.","Down-reg."),ordered=T)
+  p=p+xlab("Cluster")
+  rres$comph=p
+  cores=compareCluster(geneCluster=fcl,fun="GSEA",TERM2GENE=m2_t2g,nPermSimple=10000,seed=42,pvalueCutoff=.1)
+  #something overwrote the enrichplot dotplot, gives error unless prefix
+  p=enrichplot::dotplot(cores,split='.sign')+facet_grid(~.sign)+scale_x_discrete(guide=guide_axis(n.dodge=2))
+  #kind of hacky way to rename the facets from activated/supresed to up/down reg
+  p$data$.sign=ifelse(p$data$.sign=='activated','Up-reg.','Down-reg.')
+  p$data$.sign=factor(p$data$.sign,c("Up-reg.","Down-reg."),ordered=T)
+  p=p+xlab("Cluster")
+  rres$compc2=p
+  gpres=gprofiler2::gost(query=enl,organism='hsapiens',ordered_query=T,multi_query=TRUE,evcodes=TRUE)
+  hl=c()
+  gr=gpres %>% filter(source=='GO:BP') %>% pull(term_id)
+  if(length(gr)>0){
+    hl=c(hl,gr)
+  }
+  gr=gpres %>% filter(source=='REAC') %>% pull(term_id)
+  if(length(gr)>0){
+    hl=c(hl,gr)
+  }
+  pi=gostplot(gostres, capped = TRUE, interactive = TRUE)
+  rres$gp=pi
+  #p=gostplot(gostres, capped = TRUE, interactive = FALSE)
+  #rres$gp2=p
+  pp <- publish_gostplot(pi, highlight_terms = hl,
+                         width = NA, height = NA, filename = NULL )
+  rres$g2=pp
   if(!is.null(fprefix) & !is.null(folder)){
     fname=glue::glue("./{folder}/{fprefix}_res05.csv")
     readr::write_csv(rres$res05,fname)
     fname=glue::glue("./{folder}/{fprefix}_gres.csv")
-    readr::write_csv(as.data.frame(rres$gres),fname)
+    readr::write_csv(as.data.frame(rres$comph),fname)
+    fname=glue::glue("./{folder}/{fprefix}_gprof.pdf")
+    ggplot2::ggsave(fname,plot=rres$g2,width=7,height=10)
+    fname=glue::glue("./{folder}/{fprefix}_comph.pdf")
+    ggplot2::ggsave(fname,plot=rres$compc2,width=7,height=10)
+    fname=glue::glue("./{folder}/{fprefix}_compc2.pdf")
+    ggplot2::ggsave(fname,plot=rres$endot,width=7,height=10)
+    fname=glue::glue("./{folder}/{fprefix}_gprof.pdf")
+    ggplot2::ggsave(fname,plot=rres$gp2,width=10,height=7)
     fname=glue::glue("./{folder}/{fprefix}_enrichdot.pdf")
+    ggplot2::ggsave(fname,plot=rres$endot,width=7,height=7)
+    fname=glue::glue("./{folder}/{fprefix}_cnetfilt.pdf")
     ggplot2::ggsave(fname,plot=rres$endot,width=7,height=7)
     fname=glue::glue("./{folder}/{fprefix}_cnetfilt.pdf")
     ggplot2::ggsave(fname,plot=rres$cnetfilt,width=7,height=7)
@@ -212,8 +314,10 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
     DESeq2::plotDispEsts(dds)
     dev.off()
 
-    fname=glue::glue("./{folder}/{fprefix}_enrichdot.png")
-    ggplot2::ggsave(fname,plot=rres$endot,width=7,height=7,units='in',dpi=300)
+    fname=glue::glue("./{folder}/{fprefix}_H_enrichdot.png")
+    ggplot2::ggsave(fname,plot=rres$endoth,width=7,height=7,units='in',dpi=300)
+    fname=glue::glue("./{folder}/{fprefix}_C2_enrichdot.png")
+    ggplot2::ggsave(fname,plot=rres$endotc2,width=7,height=7,units='in',dpi=300)
     fname=glue::glue("./{folder}/{fprefix}_cnetfilt.png")
     ggplot2::ggsave(fname,plot=rres$cnetfilt,width=7,height=7,units='in',dpi=300)
     fname=glue::glue("./{folder}/{fprefix}_emap.png")

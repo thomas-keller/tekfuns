@@ -24,4 +24,5 @@ Imports:
     stringr,
     AnnotationDbi,
     RColorBrewer,
-    grDevices
+    grDevices,
+    gprofiler2
