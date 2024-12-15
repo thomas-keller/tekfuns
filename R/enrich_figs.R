@@ -137,7 +137,7 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
     cname=paste('Cluster',i)
     fc=df$log2FoldChange
     names(fc)=df$entrez
-    fc=sort(desc(fc))
+    fc=sort(fc,decreasing=T)
     fc=fc[!is.na(names(fc))]
     ens=df$ens
     #print(ens)
