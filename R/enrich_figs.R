@@ -247,20 +247,28 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
   rres$enl=enl
   cores=compareCluster(geneCluster=fcl,fun="GSEA",TERM2GENE=m_t2g,nPermSimple=10000,seed=42,pvalueCutoff=.1)
   #something overwrote the enrichplot dotplot, gives error unless prefix
+  if(nrow(cores)>0){
   p=enrichplot::dotplot(cores,split='.sign')+facet_grid(~.sign)+scale_x_discrete(guide=guide_axis(n.dodge=2))
   #kind of hacky way to rename the facets from activated/supresed to up/down reg
   p$data$.sign=ifelse(p$data$.sign=='activated','Up-reg.','Down-reg.')
   p$data$.sign=factor(p$data$.sign,c("Up-reg.","Down-reg."),ordered=T)
   p=p+xlab("Cluster")
   rres$comph=p
+  } else{
+    rres$comph=NULL
+  }
   cores=compareCluster(geneCluster=fcl,fun="GSEA",TERM2GENE=m2_t2g,nPermSimple=10000,seed=42,pvalueCutoff=.1)
   #something overwrote the enrichplot dotplot, gives error unless prefix
+  if(nrow(cores)>0){
   p=enrichplot::dotplot(cores,split='.sign')+facet_grid(~.sign)+scale_x_discrete(guide=guide_axis(n.dodge=2))
   #kind of hacky way to rename the facets from activated/supresed to up/down reg
   p$data$.sign=ifelse(p$data$.sign=='activated','Up-reg.','Down-reg.')
   p$data$.sign=factor(p$data$.sign,c("Up-reg.","Down-reg."),ordered=T)
   p=p+xlab("Cluster")
   rres$compc2=p
+  } else{
+    rres$compc2=NULL
+  }
   gpres=gprofiler2::gost(query=enl,organism='hsapiens',ordered_query=T,multi_query=TRUE,source=c("GO",'KEGG','REAC','CORUM'))
   hl=c()
   gr=gpres$result %>% filter(source=='GO:BP') %>% pull(term_id)
