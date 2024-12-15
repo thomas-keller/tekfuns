@@ -67,7 +67,7 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
   #res05 <- dplyr::arrange(res05,desc(abs(log2FoldChange)))
   res05 <- dplyr::arrange(res05,padj)
   res05$ens=rownames(res05)
-  res05$lprank=res05$lfcs*res05$pvalue
+  res05$lprank=res05$log2FoldChange*res05$pvalue
   ens=res05$ens
   res05$symbol <- AnnotationDbi::mapIds(org.Hs.eg.db::org.Hs.eg.db, keys = ens, column = c('SYMBOL'), keytype = 'ENSEMBL')
   res05$entrez <- AnnotationDbi::mapIds(org.Hs.eg.db::org.Hs.eg.db, keys = ens,column = c('ENTREZID'),
