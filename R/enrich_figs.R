@@ -285,7 +285,7 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
   gr=gpres$result %>% dplyr::filter(source=='REAC') %>% dplyr::pull(term_id)
   if(length(gr)>0){
     hl=c(hl,gr[1:2])
-    r=gpres %>% dplyr::filter(source=='GO:BP') %>% dplyr::select(source,term_id,term_name,p_values)
+    r=gpres$result %>% dplyr::filter(source=='GO:BP') %>% dplyr::select(source,term_id,term_name,p_values)
     gptab=rbind(gptab,r[1:3,])
   }
   gptab$term_name=stringr::str_wrap(gptab$term_name,40)
