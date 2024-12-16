@@ -63,7 +63,7 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
   #do some cleaning and filter out nonsignificant genes
   res05 <- na.omit(res)
   res05 <-as.data.frame(res05)
-  res05 <- dplyr::filter(res05,padj<=0.05)
+  res05 <- dplyr::filter(res05,padj<=0.05) %>% dplyr::filter(abs(log2FoldChange)>=1)
   #res05 <- dplyr::arrange(res05,desc(abs(log2FoldChange)))
   res05 <- dplyr::arrange(res05,padj)
   res05$ens=rownames(res05)
@@ -126,12 +126,13 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
 
   #start with 4 clusters
   #cluster the whole expression
-  cl=cutree(hclust(dist(mat)),4)
+  numc=2
+  cl=cutree(hclust(dist(mat)),numc)
   canno=data.frame(cluster=paste("Cluster",cl,sep=" "))
   rownames(canno)<-rownames(mat)
   fcl=list()
   enl=list()
-  for(i in 1:4){
+  for(i in 1:numc){
     df=res05[cl==i,]
     df = df %>% arrange(pvalue)
     cname=paste('Cluster',i)
@@ -272,22 +273,32 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
     rres$compc2=NULL
   }
   gpres=gprofiler2::gost(query=enl,organism='hsapiens',ordered_query=T,multi_query=TRUE,source=c("GO",'KEGG','REAC','CORUM'))
+  rres$gpres=gpres
   hl=c()
-  gr=gpres$result %>% filter(source=='GO:BP') %>% pull(term_id)
+  gptab=data.frame()
+  gr=gpres$result %>% dplyr::filter(source=='GO:BP') %>% dplyr::pull(term_id)
   if(length(gr)>0){
     hl=c(hl,gr[1:2])
+    r=gpres %>% dplyr::filter(source=='GO:BP') %>% dplyr::select(source,term_id,term_name,p_values)
+    gptab=rbind(gptab,r[1:3,])
   }
-  gr=gpres$result %>% filter(source=='REAC') %>% pull(term_id)
+  gr=gpres$result %>% dplyr::filter(source=='REAC') %>% dplyr::pull(term_id)
   if(length(gr)>0){
     hl=c(hl,gr[1:2])
+    r=gpres %>% dplyr::filter(source=='GO:BP') %>% dplyr::select(source,term_id,term_name,p_values)
+    gptab=rbind(gptab,r[1:3,])
   }
+  gptab$term_name=stringr::str_wrap(gptab$term_name,40)
+  rres$gptab=gptab
   pi=gprofiler2::gostplot(gpres, capped = TRUE, interactive = TRUE)
   rres$gp=pi
   #p=gostplot(gostres, capped = TRUE, interactive = FALSE)
   #rres$gp2=p
   p=gprofiler2::gostplot(gpres, capped = TRUE, interactive = FALSE)
-  pp <- gprofiler2::publish_gostplot(p, highlight_terms = hl,
-                         width = NA, height = NA, filename = NULL )
+  #pp <- gprofiler2::publish_gostplot(p, highlight_terms = hl,
+  #                       width = NA, height = NA, filename = NULL )
+  pp<-gprofiler2::publish_gostplot(p)
+  gptab=
   rres$gp2=pp
   if(!is.null(fprefix) & !is.null(folder)){
     fname=glue::glue("./{folder}/{fprefix}_res05.csv")
