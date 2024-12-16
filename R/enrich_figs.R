@@ -209,12 +209,14 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
   #and one with the gene id (entrez_gene)
 
   gres=clusterProfiler::GSEA(fc,TERM2GENE=m_t2g,pvalueCutoff=pcut)
+
   gres2=clusterProfiler::GSEA(fc,TERM2GENE=m2_t2g,pvalueCutoff=pcut)
   #only use original enrich result for filtering genes with cnetfilt
   greso=gres
   #use setReadable to convert entrez ids to gene names
   gres=clusterProfiler::setReadable(gres,OrgDb=org.Hs.eg.db::org.Hs.eg.db,keyType="ENTREZID")
   gres2=clusterProfiler::setReadable(gres2,OrgDb=org.Hs.eg.db::org.Hs.eg.db,keyType="ENTREZID")
+  if(!is.null(gres)){
   p=enrichplot::dotplot(gres,x='NES')
 
   p=p+ggplot2::scale_y_discrete(labels=function(x) stringr::str_wrap(x,width=40))
@@ -223,6 +225,16 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
   p=p+ggplot2::xlab("Normalized Enrichment Score")
   p=p+ggplot2::theme_bw()
   rres$endoth=p
+
+  p=cnetfilt(greso,fcut)
+  rres$cnetfilt=p
+
+  ego=enrichplot::pairwise_termsim(gres)
+  p=enrichplot::emapplot(ego,edge.params=list(min=.1))
+  rres$emap=p
+  }
+
+  if(!is.null(gres2)){
 
   p=enrichplot::dotplot(gres2,x='NES')
 
@@ -233,12 +245,8 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
   p=p+ggplot2::theme_bw()
   rres$endotc2=p
 
-  p=cnetfilt(greso,fcut)
-  rres$cnetfilt=p
 
-  ego=enrichplot::pairwise_termsim(gres)
-  p=enrichplot::emapplot(ego,edge.params=list(min=.1))
-  rres$emap=p
+  }
   #save figures to folder/pdf
   #only if prefix and folder
   #cant be blank
