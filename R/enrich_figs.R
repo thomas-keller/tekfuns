@@ -214,9 +214,10 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
   #only use original enrich result for filtering genes with cnetfilt
   greso=gres
   #use setReadable to convert entrez ids to gene names
-  gres=clusterProfiler::setReadable(gres,OrgDb=org.Hs.eg.db::org.Hs.eg.db,keyType="ENTREZID")
-  gres2=clusterProfiler::setReadable(gres2,OrgDb=org.Hs.eg.db::org.Hs.eg.db,keyType="ENTREZID")
+
+
   if(!is.null(gres)){
+  gres=clusterProfiler::setReadable(gres,OrgDb=org.Hs.eg.db::org.Hs.eg.db,keyType="ENTREZID")
   p=enrichplot::dotplot(gres,x='NES')
 
   p=p+ggplot2::scale_y_discrete(labels=function(x) stringr::str_wrap(x,width=40))
@@ -235,7 +236,7 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
   }
 
   if(!is.null(gres2)){
-
+  gres2=clusterProfiler::setReadable(gres2,OrgDb=org.Hs.eg.db::org.Hs.eg.db,keyType="ENTREZID")
   p=enrichplot::dotplot(gres2,x='NES')
 
   p=p+ggplot2::scale_y_discrete(labels=function(x) stringr::str_wrap(x,width=40))
