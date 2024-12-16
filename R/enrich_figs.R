@@ -151,7 +151,8 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
 
 
 
-  p=pheatmap::pheatmap(mat,annotation_col=anno,annotation_row=canno,treeheight_row=0,treeheight_col=0,silent=TRUE,breaks=myBreaks,color=cols,show_rownames=F)
+  #p=pheatmap::pheatmap(mat,annotation_col=anno,annotation_row=canno,treeheight_row=0,treeheight_col=0,silent=TRUE,breaks=myBreaks,color=cols,show_rownames=F)
+  p=pheatmap::pheatmap(mat,annotation_col=anno,annotation_row=canno,treeheight_row=0,treeheight_col=0,breaks=myBreaks,color=cols,show_rownames=F)
   rres$heatmap=p
   coldata=as.data.frame(colData(vsd))
   #gene dotplot
