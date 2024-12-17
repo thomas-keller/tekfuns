@@ -16,7 +16,20 @@ devtools::install('tekeller/tekfuns')
 
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
+This is a basic example demonstrating a filtered cnet based on fold change, and and automatically generating some common deseq and clusterprofiler figures.
+gsea is performed on hallmark and C2 pathways right now.
+
+input: dds should be a DESEQdata object, with condition in the metadata (that is automatically the regression term)
+given a prefix, it will make the following pdf figures:
+cnetfilt- filtered cnetplot
+enrichdot - gsea pathway dotplot
+emap - gsea pathway term network plot
+comp - gsea compare cluster (K=2)
+gprof - gprofiler2 enrichment plot
+pca -pca of genes colored by condition
+heat
+disp
+topgdot
 
 ``` r
 library(tekfuns)
