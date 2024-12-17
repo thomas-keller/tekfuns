@@ -216,7 +216,7 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
   #use setReadable to convert entrez ids to gene names
 
 
-  if(!is.null(gres)){
+  if(nrow(gres)>0){
   gres=clusterProfiler::setReadable(gres,OrgDb=org.Hs.eg.db::org.Hs.eg.db,keyType="ENTREZID")
   p=enrichplot::dotplot(gres,x='NES')
 
@@ -235,7 +235,7 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
   rres$emap=p
   }
 
-  if(!is.null(gres2)){
+  if(nrow(gres2@result)>0){
   gres2=clusterProfiler::setReadable(gres2,OrgDb=org.Hs.eg.db::org.Hs.eg.db,keyType="ENTREZID")
   p=enrichplot::dotplot(gres2,x='NES')
 
@@ -307,7 +307,6 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
   #pp <- gprofiler2::publish_gostplot(p, highlight_terms = hl,
   #                       width = NA, height = NA, filename = NULL )
   pp<-gprofiler2::publish_gostplot(p)
-  gptab=
   rres$gp2=pp
   if(!is.null(fprefix) & !is.null(folder)){
     fname=glue::glue("./{folder}/{fprefix}_res05.csv")
