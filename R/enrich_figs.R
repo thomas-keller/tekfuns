@@ -257,9 +257,10 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
   rres$fcl=fcl
   rres$enl=enl
   cores=compareCluster(geneCluster=fcl,fun="gseGO",OrgDb=org.Hs.eg.db::org.Hs.eg.db,nPermSimple=10000,seed=42,pvalueCutoff=.1)
-  cores=simplify(cores)
+
   #something overwrote the enrichplot dotplot, gives error unless prefix
   if(!is.null(cores)){
+    cores=simplify(cores)
     p=enrichplot::dotplot(cores,color='NES')+scale_x_discrete(guide=guide_axis(n.dodge=2))
     #kind of hacky way to rename the facets from activated/supresed to up/down reg
     #p$data$.sign=ifelse(p$data$.sign=='activated','Up-reg.','Down-reg.')
