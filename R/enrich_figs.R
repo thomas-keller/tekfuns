@@ -256,7 +256,7 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
 
   rres$fcl=fcl
   rres$enl=enl
-  cores=compareCluster(geneCluster=fcl,fun="GSEGO",OrgDb=org.Hs.eg.db::org.Hs.eg.db,nPermSimple=10000,seed=42,pvalueCutoff=.1)
+  cores=compareCluster(geneCluster=fcl,fun="gseGO",OrgDb=org.Hs.eg.db::org.Hs.eg.db,nPermSimple=10000,seed=42,pvalueCutoff=.1)
   #something overwrote the enrichplot dotplot, gives error unless prefix
   if(!is.null(cores)){
     p=enrichplot::dotplot(cores,color='NES')+scale_x_discrete(guide=guide_axis(n.dodge=2))
