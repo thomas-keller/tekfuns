@@ -265,6 +265,9 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
     #p$data$.sign=factor(p$data$.sign,c("Up-reg.","Down-reg."),ordered=T)
     p=p+xlab("Cluster")
     rres$compbp=p
+  } else{
+    rres$compbp=NULL
+  }
   cores=compareCluster(geneCluster=fcl,fun="GSEA",TERM2GENE=m_t2g,nPermSimple=10000,seed=42,pvalueCutoff=.1)
   #something overwrote the enrichplot dotplot, gives error unless prefix
   if(!is.null(cores)){
