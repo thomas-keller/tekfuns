@@ -38,7 +38,7 @@ cnetfilt <- function(gse,fcut=2.0,showcat=3){
 #' @export
 #'
 #' @examples todo
-rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
+rnaplots <- function(dds,pcut=0.05,nfcut=2,fcut=.5,folder=NULL,fprefix=NULL){
   if(!is.null(folder)){
     dir_create(folder)
   }
@@ -63,7 +63,7 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
   #do some cleaning and filter out nonsignificant genes
   res05 <- na.omit(res)
   res05 <-as.data.frame(res05)
-  res05 <- dplyr::filter(res05,padj<=0.05) %>% dplyr::filter(abs(log2FoldChange)>=.5)
+  res05 <- dplyr::filter(res05,padj<=0.05) %>% dplyr::filter(abs(log2FoldChange)>=fcut)
   #res05 <- dplyr::arrange(res05,desc(abs(log2FoldChange)))
   res05 <- dplyr::arrange(res05,padj)
   res05$ens=rownames(res05)
@@ -227,7 +227,7 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
   p=p+ggplot2::theme_bw()
   rres$endoth=p
 
-  p=cnetfilt(greso,fcut)
+  p=cnetfilt(greso,nfcut)
   rres$cnetfilt=p
 
   ego=enrichplot::pairwise_termsim(gres)
@@ -282,9 +282,11 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
   #p$data$.sign=factor(p$data$.sign,c("Up-reg.","Down-reg."),ordered=T)
   p=p+xlab("Cluster")
   rres$comph=p
+  rres$comphst=as.data.frame(cores)
 
   } else{
     rres$comph=NULL
+    rres$comphst=NULL
   }
   cores=compareCluster(geneCluster=fcl,fun="GSEA",TERM2GENE=m2_t2g,nPermSimple=10000,seed=42,pvalueCutoff=.1)
   #something overwrote the enrichplot dotplot, gives error unless prefix
@@ -296,8 +298,10 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
   #p$data$.sign=factor(p$data$.sign,c("Up-reg.","Down-reg."),ordered=T)
   p=p+xlab("Cluster")
   rres$compc2=p
+  rres$compc2st
   } else{
     rres$compc2=NULL
+    rres$compc2st=NULL
   }
   gpres=gprofiler2::gost(query=enl,organism='hsapiens',ordered_query=T,multi_query=TRUE,source=c("GO",'KEGG','REAC','CORUM'))
   rres$gpres=gpres
@@ -331,22 +335,20 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
     readr::write_csv(rres$res05,fname)
     fname=glue::glue("./{folder}/{fprefix}_gresH.csv")
     readr::write_csv(as.data.frame(rres$gres),fname)
+    fname=glue::glue("./{folder}/{fprefix}_compH.csv")
+    readr::write_csv(as.data.frame(rres$comphst),fname)
     fname=glue::glue("./{folder}/{fprefix}_gresC2.csv")
     readr::write_csv(as.data.frame(rres$gres2),fname)
+    fname=glue::glue("./{folder}/{fprefix}_compc2.csv")
+    readr::write_csv(as.data.frame(rres$compc2st),fname)
     fname=glue::glue("./{folder}/{fprefix}_gprof.pdf")
     ggplot2::ggsave(fname,plot=rres$g2,width=7,height=10)
     fname=glue::glue("./{folder}/{fprefix}_comph.pdf")
     ggplot2::ggsave(fname,plot=rres$comph,width=7,height=10)
-    fname=glue::glue("./{folder}/{fprefix}_comph.pdf")
-    ggplot2::ggsave(fname,plot=rres$compc2,width=7,height=10)
     fname=glue::glue("./{folder}/{fprefix}_compc2.pdf")
-    ggplot2::ggsave(fname,plot=rres$endot,width=7,height=10)
+    ggplot2::ggsave(fname,plot=rres$compc2,width=7,height=10)
     fname=glue::glue("./{folder}/{fprefix}_gprof.pdf")
     ggplot2::ggsave(fname,plot=rres$gp2,width=10,height=7)
-    fname=glue::glue("./{folder}/{fprefix}_enrichdot.pdf")
-    ggplot2::ggsave(fname,plot=rres$endot,width=7,height=7)
-    fname=glue::glue("./{folder}/{fprefix}_cnetfilt.pdf")
-    ggplot2::ggsave(fname,plot=rres$endot,width=7,height=7)
     fname=glue::glue("./{folder}/{fprefix}_cnetfilt.pdf")
     ggplot2::ggsave(fname,plot=rres$cnetfilt,width=7,height=7)
     fname=glue::glue("./{folder}/{fprefix}_emap.pdf")
