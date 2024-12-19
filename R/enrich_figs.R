@@ -238,6 +238,7 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
   if(nrow(gres2@result)>0){
   gres2=clusterProfiler::setReadable(gres2,OrgDb=org.Hs.eg.db::org.Hs.eg.db,keyType="ENTREZID")
   p=enrichplot::dotplot(gres2,x='NES')
+  p=p+scale_fill_gradient(low='skyblue',high='tomato1')
 
   p=p+ggplot2::scale_y_discrete(labels=function(x) stringr::str_wrap(x,width=40))
   # next, lets make the x axis label more descriptive
@@ -262,6 +263,7 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
   if(!is.null(cores)){
     cores=simplify(cores)
     p=enrichplot::dotplot(cores,color='NES')+scale_x_discrete(guide=guide_axis(n.dodge=2))
+    p=p+scale_fill_gradient(low='skyblue',high='tomato1')
     #kind of hacky way to rename the facets from activated/supresed to up/down reg
     #p$data$.sign=ifelse(p$data$.sign=='activated','Up-reg.','Down-reg.')
     #p$data$.sign=factor(p$data$.sign,c("Up-reg.","Down-reg."),ordered=T)
@@ -274,6 +276,7 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
   #something overwrote the enrichplot dotplot, gives error unless prefix
   if(!is.null(cores)){
   p=enrichplot::dotplot(cores,color='NES')+scale_x_discrete(guide=guide_axis(n.dodge=2))
+  p=p+scale_fill_gradient(low='skyblue',high='tomato1')
   #kind of hacky way to rename the facets from activated/supresed to up/down reg
   #p$data$.sign=ifelse(p$data$.sign=='activated','Up-reg.','Down-reg.')
   #p$data$.sign=factor(p$data$.sign,c("Up-reg.","Down-reg."),ordered=T)
@@ -287,6 +290,7 @@ rnaplots <- function(dds,pcut=0.05,fcut=2,folder=NULL,fprefix=NULL){
   #something overwrote the enrichplot dotplot, gives error unless prefix
   if(!is.null(cores)){
   p=enrichplot::dotplot(cores,color='NES')+scale_x_discrete(guide=guide_axis(n.dodge=2))
+  p=p+scale_fill_gradient(low='skyblue',high='tomato1')
   #kind of hacky way to rename the facets from activated/supresed to up/down reg
   #p$data$.sign=ifelse(p$data$.sign=='activated','Up-reg.','Down-reg.')
   #p$data$.sign=factor(p$data$.sign,c("Up-reg.","Down-reg."),ordered=T)
