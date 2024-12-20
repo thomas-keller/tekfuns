@@ -153,7 +153,16 @@ rnaplots <- function(dds,pcut=0.05,nfcut=2,fcut=.5,folder=NULL,fprefix=NULL){
 
 
   #p=pheatmap::pheatmap(mat,annotation_col=anno,annotation_row=canno,treeheight_row=0,treeheight_col=0,silent=TRUE,breaks=myBreaks,color=cols,show_rownames=F)
-  p=pheatmap::pheatmap(mat,annotation_col=anno,annotation_row=canno,treeheight_row=0,treeheight_col=0,breaks=myBreaks,color=cols,show_rownames=F)
+  #p=pheatmap::pheatmap(mat,annotation_col=anno,annotation_row=canno,treeheight_row=0,treeheight_col=0,breaks=myBreaks,color=cols,show_rownames=F)
+  ca=ComplexHeatmap::HeatmapAnnotation(condition=anno$condition)
+  ra=ComplexHeatmap::rowAnnotation(cluster=canno$cluster)
+  p=ComplexHeatmap::Heatmap(mat,top_annotation=ca,
+                            left_annotation=ra,
+                            show_row_names=F,
+                            heatmap_legend_param=list(title='Expression',
+                                                      title_position = "leftcenter-rot"))
+  ComplexHeatmap::draw(p)
+
   rres$heatmap=p
   coldata=as.data.frame(colData(vsd))
   #gene dotplot
@@ -356,8 +365,7 @@ rnaplots <- function(dds,pcut=0.05,nfcut=2,fcut=.5,folder=NULL,fprefix=NULL){
     ggplot2::ggsave(fname,plot=rres$topgdot,width=7,height=7)
     fname=glue::glue("./{folder}/{fprefix}_heat.pdf")
     pdf(fname,width=7,height=12)
-    grid::grid.newpage()
-    grid::grid.draw(rres$heatmap$gtable)
+    ComplexHeatmap::draw(rres$heatmap)
     dev.off()
     fname=glue::glue("./{folder}/{fprefix}_dispest.pdf")
     pdf(fname,width=7,height=7)
@@ -365,28 +373,27 @@ rnaplots <- function(dds,pcut=0.05,nfcut=2,fcut=.5,folder=NULL,fprefix=NULL){
     dev.off()
 
     fname=glue::glue("./{folder}/{fprefix}_H_enrichdot.png")
-    ggplot2::ggsave(fname,plot=rres$endoth,width=7,height=7,units='in',dpi=300)
+    ggplot2::ggsave(fname,plot=rres$endoth,width=7,height=7,units='in',dpi=600)
     fname=glue::glue("./{folder}/{fprefix}_C2_enrichdot.png")
-    ggplot2::ggsave(fname,plot=rres$endotc2,width=7,height=7,units='in',dpi=300)
+    ggplot2::ggsave(fname,plot=rres$endotc2,width=7,height=7,units='in',dpi=600)
     fname=glue::glue("./{folder}/{fprefix}_cnetfilt.png")
-    ggplot2::ggsave(fname,plot=rres$cnetfilt,width=7,height=7,units='in',dpi=300)
+    ggplot2::ggsave(fname,plot=rres$cnetfilt,width=7,height=7,units='in',dpi=600)
     fname=glue::glue("./{folder}/{fprefix}_emap.png")
-    ggplot2::ggsave(fname,plot=rres$emap,width=7,height=7,units='in',dpi=300)
+    ggplot2::ggsave(fname,plot=rres$emap,width=7,height=7,units='in',dpi=600)
     fname=glue::glue("./{folder}/{fprefix}_pca.png")
-    ggplot2::ggsave(fname,plot=rres$pca,width=7,height=7,units='in',dpi=300)
+    ggplot2::ggsave(fname,plot=rres$pca,width=7,height=7,units='in',dpi=600)
     fname=glue::glue("./{folder}/{fprefix}_disp.png")
-    ggplot2::ggsave(fname,plot=rres$disp,width=7,height=7,units='in',dpi=300)
+    ggplot2::ggsave(fname,plot=rres$disp,width=7,height=7,units='in',dpi=600)
     fname=glue::glue("./{folder}/{fprefix}_volc.png")
-    ggplot2::ggsave(fname,plot=rres$volc,width=7,height=7,units='in',dpi=300)
+    ggplot2::ggsave(fname,plot=rres$volc,width=7,height=7,units='in',dpi=600)
     fname=glue::glue("./{folder}/{fprefix}_topgdot.png")
-    ggplot2::ggsave(fname,plot=rres$topgdot,width=7,height=7,units='in',dpi=300)
+    ggplot2::ggsave(fname,plot=rres$topgdot,width=7,height=7,units='in',dpi=600)
     fname=glue::glue("./{folder}/{fprefix}_heat.png")
-    png(fname,width=7,height=12)
-    grid::grid.newpage()
-    grid::grid.draw(rres$heatmap$gtable)
+    png(fname,width=7,height=12,units='in',res=600)
+    ComplexHeatmap::draw(rres$heatmap)
     dev.off()
     fname=glue::glue("./{folder}/{fprefix}_dispest.pdf")
-    png(fname,width=7,height=10,units='in',res=300)
+    png(fname,width=7,height=10,units='in',res=600)
     DESeq2::plotDispEsts(dds)
     dev.off()
   }
