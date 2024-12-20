@@ -184,13 +184,6 @@ rnaplots <- function(dds,pcut=0.05,nfcut=2,fcut=.5,folder=NULL,fprefix=NULL){
 
 
 
-  m_df <- msigdbr::msigdbr(species = "Homo sapiens")
-  m_t2g <- msigdbr::msigdbr(species = "Homo sapiens", category = "H") %>%
-    dplyr::select(gs_name, entrez_gene)
-  m_t2g$gs_name=stringr::str_remove(m_t2g$gs_name,"HALLMARK_")
-  m_t2g$gs_name=stringr::str_remove(m_t2g$gs_name,"HALLMARK ")
-  #replace the underscores with spaces to make wrapping easier
-  m_t2g$gs_name=stringr::str_replace_all(m_t2g$gs_name,"_"," ")
   set.seed(1234)
 
   m_t2g <- msigdbr::msigdbr(species = "Homo sapiens", category = "H") %>%
