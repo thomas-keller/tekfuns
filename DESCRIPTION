@@ -27,5 +27,5 @@ Imports:
     grDevices,
     gprofiler2,
     colorspace,
-    ComplexHeatmap
+    ComplexHeatmap,
     ggpubr
