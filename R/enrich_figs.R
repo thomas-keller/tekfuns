@@ -177,7 +177,7 @@ rnaplots <- function(dds,pcut=0.05,nfcut=2,fcut=.5,folder=NULL,fprefix=NULL){
   expr_long$expression=expr_long$expression+1
   p=ggplot2::ggplot(expr_long,aes(x=symbol,y=expression,colour=condition))+geom_point()
   p=p+ggplot2::scale_x_discrete(guide=guide_axis(n.dodge=3))
-  p=p+ggplot2::theme_bw()
+  p=p+ggpubr::theme_pubr()
   #convert y axis to log scale since values range over orders of magnitude
   p=p+ggplot2::scale_y_log10()
   #rename x and y labels
@@ -226,7 +226,7 @@ rnaplots <- function(dds,pcut=0.05,nfcut=2,fcut=.5,folder=NULL,fprefix=NULL){
   # next, lets make the x axis label more descriptive
   #you can use xlab and ylab for this if its a ggplot
   p=p+ggplot2::xlab("Normalized Enrichment Score")
-  p=p+ggplot2::theme_bw()
+  p=p+ggpubr::theme_pubr()
   rres$endoth=p
 
   p=cnetfilt(greso,nfcut)
@@ -246,7 +246,7 @@ rnaplots <- function(dds,pcut=0.05,nfcut=2,fcut=.5,folder=NULL,fprefix=NULL){
   # next, lets make the x axis label more descriptive
   #you can use xlab and ylab for this if its a ggplot
   p=p+ggplot2::xlab("Normalized Enrichment Score")
-  p=p+ggplot2::theme_bw()
+  p=p+ggpubr::theme_pubr()
   rres$endotc2=p
 
 
@@ -270,6 +270,7 @@ rnaplots <- function(dds,pcut=0.05,nfcut=2,fcut=.5,folder=NULL,fprefix=NULL){
     #p$data$.sign=ifelse(p$data$.sign=='activated','Up-reg.','Down-reg.')
     #p$data$.sign=factor(p$data$.sign,c("Up-reg.","Down-reg."),ordered=T)
     p=p+xlab("Cluster")
+    p=p+ggpubr::theme_pubr()
     rres$compbp=p
   } else{
     rres$compbp=NULL
@@ -283,6 +284,7 @@ rnaplots <- function(dds,pcut=0.05,nfcut=2,fcut=.5,folder=NULL,fprefix=NULL){
   #p$data$.sign=ifelse(p$data$.sign=='activated','Up-reg.','Down-reg.')
   #p$data$.sign=factor(p$data$.sign,c("Up-reg.","Down-reg."),ordered=T)
   p=p+xlab("Cluster")
+  p=p+ggpubr::theme_pubr()
   rres$comph=p
   rres$comphst=as.data.frame(cores)
 
@@ -299,8 +301,10 @@ rnaplots <- function(dds,pcut=0.05,nfcut=2,fcut=.5,folder=NULL,fprefix=NULL){
   #p$data$.sign=ifelse(p$data$.sign=='activated','Up-reg.','Down-reg.')
   #p$data$.sign=factor(p$data$.sign,c("Up-reg.","Down-reg."),ordered=T)
   p=p+xlab("Cluster")
+  p=p+ggpubr::theme_pubr()
   rres$compc2=p
   rres$compc2st
+
   } else{
     rres$compc2=NULL
     rres$compc2st=NULL
