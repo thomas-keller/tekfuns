@@ -26,4 +26,5 @@ Imports:
     RColorBrewer,
     grDevices,
     gprofiler2,
-    colorspace
+    colorspace,
+    ComplexHeatmap
