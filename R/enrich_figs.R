@@ -240,7 +240,7 @@ rnaplots <- function(dds,pcut=0.05,nfcut=2,fcut=.5,folder=NULL,fprefix=NULL){
   if(nrow(gres2@result)>0){
   gres2=clusterProfiler::setReadable(gres2,OrgDb=org.Hs.eg.db::org.Hs.eg.db,keyType="ENTREZID")
   p=enrichplot::dotplot(gres2,x='NES')
-  p=p+scale_fill_continuous_diverging(midpoint=0)
+  p=p+scale_fill_continuous_diverging(mid=0)
 
   p=p+ggplot2::scale_y_discrete(labels=function(x) stringr::str_wrap(x,width=40))
   # next, lets make the x axis label more descriptive
@@ -248,6 +248,7 @@ rnaplots <- function(dds,pcut=0.05,nfcut=2,fcut=.5,folder=NULL,fprefix=NULL){
   p=p+ggplot2::xlab("Normalized Enrichment Score")
   p=p+ggpubr::theme_pubr()
   rres$endotc2=p
+
 
 
   }
@@ -265,7 +266,7 @@ rnaplots <- function(dds,pcut=0.05,nfcut=2,fcut=.5,folder=NULL,fprefix=NULL){
   if(!is.null(cores)){
     cores=simplify(cores)
     p=enrichplot::dotplot(cores,color='NES')+scale_x_discrete(guide=guide_axis(n.dodge=2))
-    p=p+scale_fill_continuous_diverging(midpoint=0)
+    p=p+scale_fill_continuous_diverging(mid=0)
     #kind of hacky way to rename the facets from activated/supresed to up/down reg
     #p$data$.sign=ifelse(p$data$.sign=='activated','Up-reg.','Down-reg.')
     #p$data$.sign=factor(p$data$.sign,c("Up-reg.","Down-reg."),ordered=T)
@@ -279,7 +280,7 @@ rnaplots <- function(dds,pcut=0.05,nfcut=2,fcut=.5,folder=NULL,fprefix=NULL){
   #something overwrote the enrichplot dotplot, gives error unless prefix
   if(!is.null(cores)){
   p=enrichplot::dotplot(cores,color='NES')+scale_x_discrete(guide=guide_axis(n.dodge=2))
-  p=p+scale_fill_continuous_diverging(midpoint=0)
+  p=p+scale_fill_continuous_diverging(mid=0)
   #kind of hacky way to rename the facets from activated/supresed to up/down reg
   #p$data$.sign=ifelse(p$data$.sign=='activated','Up-reg.','Down-reg.')
   #p$data$.sign=factor(p$data$.sign,c("Up-reg.","Down-reg."),ordered=T)
@@ -296,7 +297,7 @@ rnaplots <- function(dds,pcut=0.05,nfcut=2,fcut=.5,folder=NULL,fprefix=NULL){
   #something overwrote the enrichplot dotplot, gives error unless prefix
   if(!is.null(cores)){
   p=enrichplot::dotplot(cores,color='NES')+scale_x_discrete(guide=guide_axis(n.dodge=2))
-  p=p+colorspace::scale_fill_continuous_diverging(midpoint=0)
+  p=p+colorspace::scale_fill_continuous_diverging(mid=0)
   #kind of hacky way to rename the facets from activated/supresed to up/down reg
   #p$data$.sign=ifelse(p$data$.sign=='activated','Up-reg.','Down-reg.')
   #p$data$.sign=factor(p$data$.sign,c("Up-reg.","Down-reg."),ordered=T)
