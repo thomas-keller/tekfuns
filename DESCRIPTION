@@ -25,4 +25,5 @@ Imports:
     AnnotationDbi,
     RColorBrewer,
     grDevices,
-    gprofiler2
+    gprofiler2,
+    colorspace
