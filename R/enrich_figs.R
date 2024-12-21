@@ -421,7 +421,7 @@ rnaplots <- function(dds,sw=NULL,regulons=FALSE,pcut=0.05,nfcut=2,fcut=.5,folder
     readr::write_csv(as.data.frame(rres$gres2),fname)
     fname=glue::glue("./{folder}/{fprefix}_compc2.csv")
     readr::write_csv(as.data.frame(rres$compc2st),fname)
-    fname=glue::glue('./{folder/{fprefix}_reglist.csv')
+    fname=glue::glue('./{folder}/{fprefix}_reglist.csv')
     readr::write_csv(rres$ll,fname)
     fname=glue::glue("./{folder}/{fprefix}_toptscript.pdf")
     ggplot2::ggsave(fname,plot=rres$toptscript,width=7,height=10)
