@@ -301,7 +301,7 @@ rnaplots <- function(dds,sw=NULL,regulons=FALSE,pcut=0.05,nfcut=2,fcut=.5,folder
   if(nrow(gres2@result)>0){
   gres2=clusterProfiler::setReadable(gres2,OrgDb=org.Hs.eg.db::org.Hs.eg.db,keyType="ENTREZID")
   p=enrichplot::dotplot(gres2,x='NES')
-  p=p+scale_fill_continuous_diverging(mid=0)
+  p=p+colorspace::scale_fill_continuous_diverging(mid=0)
 
   p=p+ggplot2::scale_y_discrete(labels=function(x) stringr::str_wrap(x,width=40))
   # next, lets make the x axis label more descriptive
@@ -326,12 +326,12 @@ rnaplots <- function(dds,sw=NULL,regulons=FALSE,pcut=0.05,nfcut=2,fcut=.5,folder
   #something overwrote the enrichplot dotplot, gives error unless prefix
   if(!is.null(cores)){
     cores=simplify(cores)
-    p=enrichplot::dotplot(cores,color='NES')+scale_x_discrete(guide=guide_axis(n.dodge=2))
-    p=p+scale_fill_continuous_diverging(mid=0)
+    p=enrichplot::dotplot(cores,color='NES')+ggplot2::scale_x_discrete(guide=guide_axis(n.dodge=2))
+    p=p+colorspace::scale_fill_continuous_diverging(mid=0)
     #kind of hacky way to rename the facets from activated/supresed to up/down reg
     #p$data$.sign=ifelse(p$data$.sign=='activated','Up-reg.','Down-reg.')
     #p$data$.sign=factor(p$data$.sign,c("Up-reg.","Down-reg."),ordered=T)
-    p=p+xlab("Cluster")
+    p=p+ggplot2::xlab("Cluster")
     p=p+ggpubr::theme_pubr()
     rres$compbp=p
   } else{
@@ -341,11 +341,11 @@ rnaplots <- function(dds,sw=NULL,regulons=FALSE,pcut=0.05,nfcut=2,fcut=.5,folder
   #something overwrote the enrichplot dotplot, gives error unless prefix
   if(!is.null(cores)){
   p=enrichplot::dotplot(cores,color='NES')+scale_x_discrete(guide=guide_axis(n.dodge=2))
-  p=p+scale_fill_continuous_diverging(mid=0)
+  p=p+colorspace::scale_fill_continuous_diverging(mid=0)
   #kind of hacky way to rename the facets from activated/supresed to up/down reg
   #p$data$.sign=ifelse(p$data$.sign=='activated','Up-reg.','Down-reg.')
   #p$data$.sign=factor(p$data$.sign,c("Up-reg.","Down-reg."),ordered=T)
-  p=p+xlab("Cluster")
+  p=p+ggplot2::xlab("Cluster")
   p=p+ggpubr::theme_pubr()
   rres$comph=p
   rres$comphst=as.data.frame(cores)
@@ -362,7 +362,7 @@ rnaplots <- function(dds,sw=NULL,regulons=FALSE,pcut=0.05,nfcut=2,fcut=.5,folder
   #kind of hacky way to rename the facets from activated/supresed to up/down reg
   #p$data$.sign=ifelse(p$data$.sign=='activated','Up-reg.','Down-reg.')
   #p$data$.sign=factor(p$data$.sign,c("Up-reg.","Down-reg."),ordered=T)
-  p=p+xlab("Cluster")
+  p=p+ggplot2::xlab("Cluster")
   p=p+ggpubr::theme_pubr()
   rres$compc2=p
   rres$compc2st
