@@ -53,26 +53,25 @@ rnaplots <- function(dds,sw=NULL,regulons=FALSE,pcut=0.05,nfcut=2,fcut=.5,folder
   if(!is.null(sw)){
     #add fishpond transcript level analysis
     #input is tximeta object
-    y=sw
-    y <- fishpond::scaleInfReps(y) # scales counts
-    y <- fishpond::labelKeep(y) # labels features to keep
-    y <- y[S4Vectors::mcols(y)$keep,]
+    sw <- fishpond::scaleInfReps(sw) # scales counts
+    sw <- fishpond::labelKeep(sw) # labels features to keep
+    sw <- sw[S4Vectors::mcols(sw)$keep,]
     set.seed(1)
     #still assuming metadata has a condition column of main interest
-    y <- fishpond::swish(y, x="condition") # simplest Swish case
+    sw <- fishpond::swish(sw, x="condition") # simplest Swish case
     cols <- c("log10mean","log2FC","pvalue","qvalue")
-    most.sig <- with(S4Vectors::mcols(y),
+    most.sig <- with(S4Vectors::mcols(sw),
                      order(qvalue, -abs(log2FC)))
-    sig <- S4Vectors::mcols(y)$qvalue < .05
-    lo <- order(mcols(y)$log2FC * sig)
-    hi <- order(-mcols(y)$log2FC * sig)
+    sig <- S4Vectors::mcols(sw)$qvalue < .05
+    lo <- order(mcols(sw)$log2FC * sig)
+    hi <- order(-mcols(sw)$log2FC * sig)
     #todo implement a ggplot for infrep plot
     #could move to a function
-    y <- fishpond::addIds(y, "SYMBOL", gene=TRUE)
+    sw <- fishpond::addIds(sw, "SYMBOL", gene=TRUE)
     #get top/bottom most genes by lfc
     gids=c(hi[1:5],lo[1:5])
-    infReps <- SummarizedExperiment::assays(y[gids,])[grep("infRep",
-                                                           SummarizedExperiment::assayNames(y))]
+    infReps <- SummarizedExperiment::assays(sw[gids,])[grep("infRep",
+                                                           SummarizedExperiment::assayNames(sw))]
     infReps<- unlist(infReps)
     infReps=as.data.frame(infReps)
     infRepn=stringr::str_split_i(rownames(infReps),"\\.",1)
@@ -83,9 +82,9 @@ rnaplots <- function(dds,sw=NULL,regulons=FALSE,pcut=0.05,nfcut=2,fcut=.5,folder
                                          names_to='sample',
                                          values_to='expression')
     #infl$condition=stringr::str_split_i(infl$sample,"_",2)
-    md=mcols(y)[,c("tx_name","SYMBOL")]
+    md=mcols(sw)[,c("tx_name","SYMBOL")]
     md=as.data.frame(md)
-    cold=as.data.frame(colData(y))
+    cold=as.data.frame(colData(sw))
     infl=dplyr::inner_join(infl,md,by=dplyr::join_by(tname==tx_name))
     infl=dplyr::inner_join(infl,cold,by=dplyr::join_by(sample==names))
     p=ggplot2::ggplot(infl,aes(x=SYMBOL,
