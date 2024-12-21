@@ -28,4 +28,7 @@ Imports:
     gprofiler2,
     colorspace,
     ComplexHeatmap,
-    ggpubr
+    ggpubr,
+    fishpond,
+    org.Hs.eg.db,
+    GENIE3

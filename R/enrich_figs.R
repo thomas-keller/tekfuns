@@ -3,6 +3,7 @@
 
 
 #' Filter a gene set enrichment result to eliminate genes with low absolute fold-change
+#' @import org.Hs.eg.db
 #' @importFrom magrittr %>%
 #' @param gse gene-set enrichment object from clusterprofiler
 #' @param fcut minimum absolute foldchange of genes to be retained
@@ -28,21 +29,81 @@ cnetfilt <- function(gse,fcut=2.0,showcat=3){
 
 
 #' automagically make a bunch of standard deseq2 and clusterprofiler plots
+#' for transcript level analysis, need a tximeta object with bootstraps/ gibbs samples
 #'
 #' @param dds DESeqDataset object
+#' @param sw tximeta object from salmon w/ inferential reps
+#' @param regulons infer regulons with GENIE3 method? default FALSE
 #' @param pcut gsea pvalue threshold
 #' @param folder output result folder
 #' @param fprefix output analysis prefix
+#' @param nfcut gsea filter for network plots
 #'
 #' @return list of plots
 #' @export
 #'
 #' @examples todo
-rnaplots <- function(dds,pcut=0.05,nfcut=2,fcut=.5,folder=NULL,fprefix=NULL){
+rnaplots <- function(dds,sw=NULL,regulons=FALSE,pcut=0.05,nfcut=2,fcut=.5,folder=NULL,fprefix=NULL){
   if(!is.null(folder)){
     dir_create(folder)
   }
   rres=list()
+
+  if(!is.null(sw)){
+    #add fishpond transcript level analysis
+    #input is tximeta object
+    y=sw
+    y <- fishpond::scaleInfReps(y) # scales counts
+    y <- fishpond::labelKeep(y) # labels features to keep
+    y <- y[S4Vectors::mcols(y)$keep,]
+    set.seed(1)
+    #still assuming metadata has a condition column of main interest
+    y <- fishpond::swish(y, x="condition") # simplest Swish case
+    cols <- c("log10mean","log2FC","pvalue","qvalue")
+    most.sig <- with(S4Vectors::mcols(y),
+                     order(qvalue, -abs(log2FC)))
+    sig <- S4Vectors::mcols(y)$qvalue < .05
+    lo <- order(mcols(y)$log2FC * sig)
+    hi <- order(-mcols(y)$log2FC * sig)
+    #todo implement a ggplot for infrep plot
+    #could move to a function
+    y <- fishpond::addIds(y, "SYMBOL", gene=TRUE)
+    #get top/bottom most genes by lfc
+    gids=c(hi[1:5],lo[1:5])
+    infReps <- SummarizedExperiment::assays(y[gids,])[grep("infRep",
+                                                           SummarizedExperiment::assayNames(y))]
+    infReps<- unlist(infReps)
+    infReps=as.data.frame(infReps)
+    infRepn=stringr::str_split_i(rownames(infReps),"\\.",1)
+    infRept=stringr::str_split_i(rownames(infReps),"\\.",2)
+    infReps$rep=infRepn
+    infReps$tname=infRept
+    infl=infReps %>% tidyr::pivot_longer(-all_of(c('rep','tname')),
+                                         names_to='sample',
+                                         values_to='expression')
+    #infl$condition=stringr::str_split_i(infl$sample,"_",2)
+    md=mcols(y)[,c("tx_name","SYMBOL")]
+    md=as.data.frame(md)
+    cold=as.data.frame(colData(y))
+    infl=dplyr::inner_join(infl,md,by=dplyr::join_by(tname==tx_name))
+    infl=dplyr::inner_join(infl,cold,by=dplyr::join_by(sample==names))
+    p=ggplot2::ggplot(infl,aes(x=SYMBOL,
+                               y=expression,
+                               color=condition,
+                               shape=sample))+scale_y_log10()+geom_jitter()
+    p=p+ggpubr::theme_pubr()
+    p=p+ggpubr::labs_pubr()
+    rres$toptscript=p
+    #facet wrap the top 5-10 genes/transcripts?
+    # do gene  level, isoform test
+    #add results to output
+
+  } else{
+    rres$toptscript=NULL
+  }
+
+
+
   rname=resultsNames(dds)
   lrn=rname[length(rname)]
   #filter out genes with low reads
@@ -337,6 +398,18 @@ rnaplots <- function(dds,pcut=0.05,nfcut=2,fcut=.5,folder=NULL,fprefix=NULL){
   #                       width = NA, height = NA, filename = NULL )
   pp<-gprofiler2::publish_gostplot(p)
   rres$gp2=pp
+
+  #get regulons w/ genie3 if regulons not false
+  if(regulons){
+    set.seed(54321)
+    #could expand to handle candidate regulators
+    wm<-GENIE3::GENIE3(mat,nCores=8)
+    ll=GENIE3::getLinkList(wm)
+    rres$ll=ll
+  } else{
+    rres$ll=NULL
+  }
+
   if(!is.null(fprefix) & !is.null(folder)){
     fname=glue::glue("./{folder}/{fprefix}_res05.csv")
     readr::write_csv(rres$res05,fname)
@@ -348,6 +421,10 @@ rnaplots <- function(dds,pcut=0.05,nfcut=2,fcut=.5,folder=NULL,fprefix=NULL){
     readr::write_csv(as.data.frame(rres$gres2),fname)
     fname=glue::glue("./{folder}/{fprefix}_compc2.csv")
     readr::write_csv(as.data.frame(rres$compc2st),fname)
+    fname=glue::glue('./{folder/{fprefix}_reglist.csv')
+    readr::write_csv(rres$ll,fname)
+    fname=glue::glue("./{folder}/{fprefix}_toptscript.pdf")
+    ggplot2::ggsave(fname,plot=rres$toptscript,width=7,height=10)
     fname=glue::glue("./{folder}/{fprefix}_gprof.pdf")
     ggplot2::ggsave(fname,plot=rres$g2,width=7,height=10)
     fname=glue::glue("./{folder}/{fprefix}_comph.pdf")
@@ -377,6 +454,8 @@ rnaplots <- function(dds,pcut=0.05,nfcut=2,fcut=.5,folder=NULL,fprefix=NULL){
     DESeq2::plotDispEsts(dds)
     dev.off()
 
+    fname=glue::glue("./{folder}/{fprefix}_toptscript.png")
+    ggplot2::ggsave(fname,plot=rres$toptscript,width=7,height=7,units='in',dpi=600)
     fname=glue::glue("./{folder}/{fprefix}_H_enrichdot.png")
     ggplot2::ggsave(fname,plot=rres$endoth,width=7,height=7,units='in',dpi=600)
     fname=glue::glue("./{folder}/{fprefix}_C2_enrichdot.png")
