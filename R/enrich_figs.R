@@ -3,7 +3,6 @@
 
 
 #' Filter a gene set enrichment result to eliminate genes with low absolute fold-change
-#' @import fishpond
 #' @import org.Hs.eg.db
 #' @importFrom magrittr %>%
 #' @param gse gene-set enrichment object from clusterprofiler
@@ -55,14 +54,14 @@ rnaplots <- function(dds,sw=NULL,regulons=FALSE,pcut=0.05,nfcut=2,fcut=.5,folder
     #input is tximeta object
     sw <- fishpond::scaleInfReps(sw) # scales counts
     sw <- fishpond::labelKeep(sw) # labels features to keep
-    sw <- sw[S4Vectors::mcols(sw)$keep,]
+    sw <- sw[SummarizedExperiment::mcols(sw)$keep,]
     set.seed(1)
     #still assuming metadata has a condition column of main interest
     sw <- fishpond::swish(sw, x="condition") # simplest Swish case
     cols <- c("log10mean","log2FC","pvalue","qvalue")
-    most.sig <- with(S4Vectors::mcols(sw),
+    most.sig <- with(SummarizedExperiment::mcols(sw),
                      order(qvalue, -abs(log2FC)))
-    sig <- S4Vectors::mcols(sw)$qvalue < .05
+    sig <- SummarizedExperiment::mcols(sw)$qvalue < .05
     lo <- order(mcols(sw)$log2FC * sig)
     hi <- order(-mcols(sw)$log2FC * sig)
     #todo implement a ggplot for infrep plot
