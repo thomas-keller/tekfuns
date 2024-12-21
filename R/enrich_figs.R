@@ -67,7 +67,7 @@ rnaplots <- function(dds,sw=NULL,regulons=FALSE,pcut=0.05,nfcut=2,fcut=.5,folder
     hi <- order(-SummarizedExperiment::mcols(sw)$log2FC * sig)
     #todo implement a ggplot for infrep plot
     #could move to a function
-    sw <- fishpond::addIds(sw, "SYMBOL", gene=TRUE)
+    sw <- tximeta::addIds(sw, "SYMBOL", gene=TRUE)
     #get top/bottom most genes by lfc
     gids=c(hi[1:5],lo[1:5])
     infReps <- SummarizedExperiment::assays(sw[gids,])[grep("infRep",
