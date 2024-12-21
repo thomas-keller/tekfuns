@@ -2,14 +2,30 @@
 % Please edit documentation in R/enrich_figs.R
 \name{rnaplots}
 \alias{rnaplots}
-\title{automagically make a bunch of standard deseq2 and clusterprofiler plots}
+\title{automagically make a bunch of standard deseq2 and clusterprofiler plots
+for transcript level analysis, need a tximeta object with bootstraps/ gibbs samples}
 \usage{
-rnaplots(dds, pcut = 0.05, fcut = 2, folder = NULL, fprefix = NULL)
+rnaplots(
+  dds,
+  sw = NULL,
+  regulons = FALSE,
+  pcut = 0.05,
+  nfcut = 2,
+  fcut = 0.5,
+  folder = NULL,
+  fprefix = NULL
+)
 }
 \arguments{
 \item{dds}{DESeqDataset object}
 
+\item{sw}{tximeta object from salmon w/ inferential reps}
+
+\item{regulons}{infer regulons with GENIE3 method? default FALSE}
+
 \item{pcut}{gsea pvalue threshold}
+
+\item{nfcut}{gsea filter for network plots}
 
 \item{folder}{output result folder}
 
@@ -20,6 +36,7 @@ list of plots
 }
 \description{
 automagically make a bunch of standard deseq2 and clusterprofiler plots
+for transcript level analysis, need a tximeta object with bootstraps/ gibbs samples
 }
 \examples{
 todo
