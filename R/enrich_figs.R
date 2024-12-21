@@ -403,7 +403,7 @@ rnaplots <- function(dds,sw=NULL,regulons=FALSE,pcut=0.05,nfcut=2,fcut=.5,folder
   if(regulons){
     set.seed(54321)
     #could expand to handle candidate regulators
-    wm<-GENIE3::GENIE3(mat,nCores=8)
+    wm<-GENIE3::GENIE3(mat,nCores=4)
     ll=GENIE3::getLinkList(wm)
     rres$ll=ll
   } else{
