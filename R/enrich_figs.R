@@ -59,11 +59,12 @@ rnaplots <- function(dds,sw=NULL,regulons=FALSE,pcut=0.05,nfcut=2,fcut=.5,folder
     #still assuming metadata has a condition column of main interest
     sw <- fishpond::swish(sw, x="condition") # simplest Swish case
     cols <- c("log10mean","log2FC","pvalue","qvalue")
-    most.sig <- with(SummarizedExperiment::mcols(sw),
-                     order(qvalue, -abs(log2FC)))
+    most.sig <-SummarizedExperiment::mcols(sw) %>%
+      as.data.frame() %>%
+      dplyr::arrange(qvalue,desc(abs(log2FC)))
     sig <- SummarizedExperiment::mcols(sw)$qvalue < .05
-    lo <- order(mcols(sw)$log2FC * sig)
-    hi <- order(-mcols(sw)$log2FC * sig)
+    lo <- order(SummarizedExperiment::mcols(sw)$log2FC * sig)
+    hi <- order(-SummarizedExperiment::mcols(sw)$log2FC * sig)
     #todo implement a ggplot for infrep plot
     #could move to a function
     sw <- fishpond::addIds(sw, "SYMBOL", gene=TRUE)
