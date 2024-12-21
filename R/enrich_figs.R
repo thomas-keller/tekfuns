@@ -4,6 +4,7 @@
 
 #' Filter a gene set enrichment result to eliminate genes with low absolute fold-change
 #' @import org.Hs.eg.db
+#' @import S4Vectors
 #' @importFrom magrittr %>%
 #' @param gse gene-set enrichment object from clusterprofiler
 #' @param fcut minimum absolute foldchange of genes to be retained
