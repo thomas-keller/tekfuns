@@ -163,6 +163,9 @@ rnaplots <- function(dds,sw=NULL,regulons=FALSE,pcut=0.05,nfcut=2,fcut=.5,folder
   topg <- res05$ens[1:30]
   mat  <- SummarizedExperiment::assay(vsd)
   mat<-mat[row.names(mat) %in% res05$ens,]
+  #reorder so mat is in same order as res05
+  #match order is target, vector to redorder
+  mat<-mat[match(res05$ens,row.names(mat)),]
   #mat  <- mat[row.names(mat) %in% topg, ]
   #do z scale
   #mat=mat[row.names(mat) %in% topg,]
@@ -403,9 +406,14 @@ rnaplots <- function(dds,sw=NULL,regulons=FALSE,pcut=0.05,nfcut=2,fcut=.5,folder
   if(regulons){
     set.seed(54321)
     #could expand to handle candidate regulators
-    wm<-GENIE3::GENIE3(mat,nCores=4)
+    #for now just taking the most 1k significant
+    m2=mat[1:1000,]
+    row.names(m2)=res05$csymbol[1:1000]
+    wm<-GENIE3::GENIE3(m2,nCores=4)
     ll=GENIE3::getLinkList(wm)
-    rres$ll=ll
+    #return up to 1k rows for table
+    llt=ll[min(1000,nrow(ll)),]
+    rres$ll=llt
   } else{
     rres$ll=NULL
   }

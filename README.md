@@ -6,6 +6,14 @@
 
 The goal of tekfuns is to bundle together some clusterprofiler and deseq2 plots for rnaseq that I commonly need to make, hopefully with decent defaults. There are mostly sharp edges right now, so user beware.
 
+Notably, I added in some transcript-level analysis with fishpond and network/regulon prediction with genie3. If you enable these options, expect the analysis to take several more minutes. 
+
+Right now with all options takes ~7-10 minutes.
+
+also, to save individual output (all results are returned in a list object), provide a folder AND a file prefix.
+
+running genie3 on the whole rnaseq dataset produces a very large file, shortening to top 1k genes for now.
+
 ## Installation
 
 You can install the development version of tekfuns like so:
@@ -47,5 +55,10 @@ cf=cnetfilter(gse,fcut=1.5)
 rp=rnaplots(dds,folder='exfolder',fprefix='exres')
 #fcut and pcut are options now, for adjust cnetfilt and gsea, respectively
 rp=rnaplots(dds,fcut=1.5,pcut=.1,folder='exfolder',fprefix='exres')
+
+#all bells and whistles, run transcript-level analysis and regulon inference
+#se is a tximeta object from salmon
+rp=rnaplots(dds,sw=se,regulons=TRUE,pcut=.1,nfcut=1,folder='exfolder',fprefix='exres')
+
 ```
 
