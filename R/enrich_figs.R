@@ -133,7 +133,9 @@ rnaplots <- function(dds,sw=NULL,regulons=FALSE,pcut=0.05,nfcut=2,fcut=.5,folder
   res05$symbol <- AnnotationDbi::mapIds(org.Hs.eg.db::org.Hs.eg.db, keys = ens, column = c('SYMBOL'), keytype = 'ENSEMBL')
   res05$entrez <- AnnotationDbi::mapIds(org.Hs.eg.db::org.Hs.eg.db, keys = ens,column = c('ENTREZID'),
                          keytype = 'ENSEMBL')
-  res05$csymbol=ifelse(is.na(res05$symbol),res05$ens,res05$symbol)
+  res05$csymbol <- ifelse(is.na(res05$symbol),res05$ens,res05$symbol)
+  #drop the duplicates in csymbol
+  res05 <- res05 %>% distinct(csymbol,.keep_all=TRUE)
   rres$res05=res05
   vsd=DESeq2::vst(dds,blind=FALSE)
   #pca
