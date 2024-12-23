@@ -410,7 +410,7 @@ rnaplots <- function(dds,sw=NULL,regulons=FALSE,pcut=0.05,nfcut=2,fcut=.5,folder
     #could expand to handle candidate regulators
     #for now just taking the most 1k significant
     nsel=min(200,nrow(mat))
-    m2=mat[nsel,]
+    m2=mat[1:nsel,]
     row.names(m2)=res05$csymbol[1:nsel]
     wm<-GENIE3::GENIE3(m2,nCores=4)
     ll=GENIE3::getLinkList(wm)
