@@ -107,8 +107,8 @@ rnaplots <- function(dds,sw=NULL,regulons=FALSE,pcut=0.05,nfcut=2,fcut=.5,folder
   rname=resultsNames(dds)
   lrn=rname[length(rname)]
   #filter out genes with low reads
-  smallestGroupSize <- 3
-  keep <- rowSums(counts(dds) >= 10) >= smallestGroupSize
+  smallestGroupSize <- 2
+  keep <- rowSums(counts(dds) >= 5) >= smallestGroupSize
   dds <- dds[keep,]
 
   #run deseq method, it will automatically perform several steps
