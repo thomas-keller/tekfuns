@@ -12,7 +12,7 @@ Right now with all options takes ~7-10 minutes.
 
 also, to save individual output (all results are returned in a list object), provide a folder AND a file prefix.
 
-running genie3 on the whole rnaseq dataset produces a very large file, shortening to top 1k genes for now.
+running genie3 on the whole rnaseq dataset produces a very large file, shortening to top 200 genes for now. hardcoded for now, allow option later.
 
 ## Installation
 
