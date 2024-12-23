@@ -118,13 +118,14 @@ rnaplots <- function(dds,sw=NULL,regulons=FALSE,pcut=0.05,nfcut=2,fcut=.5,folder
   reso <- DESeq2::results(dds,alpha=.05)
   #keep raw results
   resd<- DESeq2::results(dds)
+  resd$ens<-rownames(resd)
   ensd=resd$ens
   resd$symbol <- AnnotationDbi::mapIds(org.Hs.eg.db::org.Hs.eg.db, keys = ensd, column = c('SYMBOL'), keytype = 'ENSEMBL')
   resd$entrez <- AnnotationDbi::mapIds(org.Hs.eg.db::org.Hs.eg.db, keys = ensd,column = c('ENTREZID'),
                                         keytype = 'ENSEMBL')
   resd$csymbol <- ifelse(is.na(resd$symbol),resd$ens,resd$symbol)
   #drop the duplicates in csymbol
-  resd <- resd %>% distinct(csymbol,.keep_all=TRUE) %>%
+  resd <- resd %>% as.data.frame() %>% distinct(csymbol,.keep_all=TRUE) %>%
     relocate(csymbol)
   rres$resd=resd
   #continue with the .05 cutoff results
