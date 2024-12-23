@@ -135,7 +135,8 @@ rnaplots <- function(dds,sw=NULL,regulons=FALSE,pcut=0.05,nfcut=2,fcut=.5,folder
                          keytype = 'ENSEMBL')
   res05$csymbol <- ifelse(is.na(res05$symbol),res05$ens,res05$symbol)
   #drop the duplicates in csymbol
-  res05 <- res05 %>% distinct(csymbol,.keep_all=TRUE)
+  res05 <- res05 %>% distinct(csymbol,.keep_all=TRUE) %>%
+    relocate(csymbol)
   rres$res05=res05
   vsd=DESeq2::vst(dds,blind=FALSE)
   #pca
