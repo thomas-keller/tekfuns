@@ -429,7 +429,7 @@ rnaplots <- function(dds,sw=NULL,regulons=FALSE,pcut=0.05,nfcut=2,fcut=.5,folder
     wm<-GENIE3::GENIE3(m2,nCores=4)
     ll=GENIE3::getLinkList(wm)
     #return up to 1k rows for table
-    llt=ll[min(1000,nrow(ll)),]
+    llt=ll[1:(min(1000,nrow(ll))),]
     rres$ll=llt
   } else{
     rres$ll=NULL
