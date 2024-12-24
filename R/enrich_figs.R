@@ -313,7 +313,7 @@ rnaplots <- function(dds,sw=NULL,regulons=FALSE,pcut=0.05,nfcut=2,fcut=.5,folder
   rres$cnetfilt=p
 
   ego=enrichplot::pairwise_termsim(gres)
-  p=enrichplot::emapplot(ego,edge.params=list(min=.1))
+  p=enrichplot::emapplot(ego,min_edge=.1)
   rres$emap=p
   }
 
