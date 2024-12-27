@@ -166,8 +166,8 @@ rnaplots <- function(dds,sw=NULL,regulons=FALSE,pcut=0.05,nfcut=2,fcut=.5,folder
   #dispersal estimate
   #its a base R plot, move to end
   #volcano
-  p=EnhancedVolcano::EnhancedVolcano(res05,
-                                   lab = res05$csymbol,
+  p=EnhancedVolcano::EnhancedVolcano(resd,
+                                   lab = resd$csymbol,
                                    x = 'log2FoldChange',y = 'pvalue',pCutoff = 10e-12, title = NULL,
                                    FCcutoff = 1.5,
                                    subtitle=NULL,
@@ -183,32 +183,32 @@ rnaplots <- function(dds,sw=NULL,regulons=FALSE,pcut=0.05,nfcut=2,fcut=.5,folder
   rres$volc=p
 
   #heatmap
-  #res05 arranged by padj now
-  topg <- res05$ens[1:30]
+  #resd arranged by padj now
+  topg <- resd$ens[1:30]
   mat  <- SummarizedExperiment::assay(vsd)
-  mat<-mat[row.names(mat) %in% res05$ens,]
+  mat<-mat[row.names(mat) %in% resd$ens,]
   #reorder so mat is in same order as res05
   #match order is target, vector to redorder
-  mat<-mat[match(res05$ens,row.names(mat)),]
+  mat<-mat[match(resd$ens,row.names(mat)),]
   #mat  <- mat[row.names(mat) %in% topg, ]
   #do z scale
   #mat=mat[row.names(mat) %in% topg,]
   mat <- t(scale(t(mat)))
-  #resv=res05[row.names(res05) %in% row.names(mat),]
+  #resv=resd[row.names(resd) %in% row.names(mat),]
   #row.names(mat)=resv$symbol
   anno <- as.data.frame(colData(vsd)[, c("condition")])
   colnames(anno) <- "condition"
   #add rownames to anno so they match the column names from the expression matrix
   #this is needed so that the two dataframes can be matched up
   row.names(anno) <- colnames(mat)
-  #row.names(mat)<-res05$csymbol[1:30]
+  #row.names(mat)<-resd$csymbol[1:30]
   #0 point not always white, how to force:
   #thanks https://stackoverflow.com/questions/31677923/set-0-point-for-pheatmap-in-r
   cols <- RColorBrewer::brewer.pal(10, "Spectral")
   plen<-50
   cols<- grDevices::colorRampPalette(rev(cols))(plen)
   #mat=mat[1:30,]
-  #row.names(mat)=res05$csymbol[1:30]
+  #row.names(mat)=resd$csymbol[1:30]
   myBreaks <- c(seq(min(mat), 0, length.out=ceiling(plen/2) + 1),
                 seq(max(mat)/plen, max(mat), length.out=floor(plen/2)))
 
@@ -221,7 +221,7 @@ rnaplots <- function(dds,sw=NULL,regulons=FALSE,pcut=0.05,nfcut=2,fcut=.5,folder
   fcl=list()
   enl=list()
   for(i in 1:numc){
-    df=res05[cl==i,]
+    df=resd[cl==i,]
     df = df %>% arrange(pvalue)
     cname=paste('Cluster',i)
     fc=df$log2FoldChange
@@ -256,7 +256,7 @@ rnaplots <- function(dds,sw=NULL,regulons=FALSE,pcut=0.05,nfcut=2,fcut=.5,folder
   #gene dotplot
   tmat=DESeq2::counts(dds,normalized=TRUE)
   tmat=tmat[row.names(tmat) %in% topg[1:20],]
-  sym=res05$csymbol[1:20]
+  sym=resd$csymbol[1:20]
   #row.names(tmat)=resv$symbol
   tmatd=as.data.frame(tmat)
   tmatd$symbol=sym
@@ -272,8 +272,8 @@ rnaplots <- function(dds,sw=NULL,regulons=FALSE,pcut=0.05,nfcut=2,fcut=.5,folder
   p=p+ggplot2::xlab("gene symbol")+ggplot2::ylab("log10 counts")
   rres$topgdot=p
   #now to enrich plots
-  fc=res05$log2FoldChange
-  names(fc)=res05$entrez
+  fc=resd$log2FoldChange
+  names(fc)=resd$entrez
   fc=sort(fc,decreasing=TRUE)
   fc=fc[!is.na(names(fc))]
   fc=fc[!duplicated(names(fc))]
@@ -433,7 +433,7 @@ rnaplots <- function(dds,sw=NULL,regulons=FALSE,pcut=0.05,nfcut=2,fcut=.5,folder
     #for now just taking the most 1k significant
     nsel=min(200,nrow(mat))
     m2=mat[1:nsel,]
-    row.names(m2)=res05$csymbol[1:nsel]
+    row.names(m2)=resd$csymbol[1:nsel]
     wm<-GENIE3::GENIE3(m2,nCores=4)
     ll=GENIE3::getLinkList(wm)
     #return up to 1k rows for table
