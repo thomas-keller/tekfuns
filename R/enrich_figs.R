@@ -130,10 +130,11 @@ rnaplots <- function(dds,sw=NULL,regulons=FALSE,pcut=0.05,nfcut=2,fcut=.5,folder
                                         keytype = 'ENSEMBL')
   resd$csymbol <- ifelse(is.na(resd$symbol),resd$ens,resd$symbol)
   #drop the duplicates in csymbol
+  resd <-DESeq2::lfcShrink(dds,res=resd,coef=lrn)
   resd <- resd[order(resd$padj),]
   resd <-subset(resd,padj<=.1)
   resd <-resd[!duplicated(resd$csymbol),]
-  resd <-DESeq2::lfcShrink(dds,res=resd,coef=lrn)
+
   resd<-resd %>% as.data.frame(resd)
   rres$resd=resd
   #continue with the .05 cutoff results
