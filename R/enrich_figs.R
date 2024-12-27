@@ -250,8 +250,8 @@ rnaplots <- function(dds,sw=NULL,regulons=FALSE,pcut=0.05,nfcut=2,fcut=.5,folder
   coldata=as.data.frame(colData(vsd))
   #gene dotplot
   tmat=DESeq2::counts(dds,normalized=TRUE)
-  tmat=tmat[row.names(tmat) %in% topg[1:30],]
-  sym=res05$csymbol[1:30]
+  tmat=tmat[row.names(tmat) %in% topg[1:20],]
+  sym=res05$csymbol[1:20]
   #row.names(tmat)=resv$symbol
   tmatd=as.data.frame(tmat)
   tmatd$symbol=sym
