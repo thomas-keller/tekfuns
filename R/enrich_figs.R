@@ -118,9 +118,11 @@ rnaplots <- function(dds,sw=NULL,regulons=FALSE,pcut=0.05,nfcut=2,fcut=.5,folder
   dds<-DESeq2::DESeq(dds)
 
   #extract the results
+  rname=resultsNames(dds)
+  lrn=rname[length(rname)]
   reso <- DESeq2::results(dds,alpha=.05)
   #keep raw results
-  resd<- DESeq2::results(dds)
+  resd<- DESeq2::results(dds,alpha=.1)
   resd$ens<-rownames(resd)
   ensd=resd$ens
   resd$symbol <- AnnotationDbi::mapIds(org.Hs.eg.db::org.Hs.eg.db, keys = ensd, column = c('SYMBOL'), keytype = 'ENSEMBL')
@@ -128,15 +130,16 @@ rnaplots <- function(dds,sw=NULL,regulons=FALSE,pcut=0.05,nfcut=2,fcut=.5,folder
                                         keytype = 'ENSEMBL')
   resd$csymbol <- ifelse(is.na(resd$symbol),resd$ens,resd$symbol)
   #drop the duplicates in csymbol
-  resd <- resd %>% as.data.frame() %>% distinct(csymbol,.keep_all=TRUE) %>%
-    relocate(csymbol)
+  resd <- resd[order(resd$padj),]
+  resd <-subset(resd,padj<=.1)
+  resd <-resd[!duplicated(resd$csymbol),]
+  resd <-DESeq2::lfcShrink(dds,res=resd,coef=lrn)
+  resd<-resd %>% as.data.frame(resd)
   rres$resd=resd
   #continue with the .05 cutoff results
   #will automatically use last coef in regression
-  rname=resultsNames(dds)
-  lrn=rname[length(rname)]
+
   res=DESeq2::lfcShrink(dds,res=reso,coef=lrn)
-  res$unslfc=reso$log2FoldChange
   #do some cleaning and filter out nonsignificant genes
   res05 <- na.omit(res)
   res05 <-as.data.frame(res05)
