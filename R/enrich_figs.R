@@ -96,6 +96,7 @@ rnaplots <- function(dds,sw=NULL,regulons=FALSE,pcut=0.05,nfcut=2,fcut=.5,folder
     p=p+ggpubr::theme_pubr()
     p=p+ggpubr::labs_pubr()
     rres$toptscript=p
+    rres$infl=infl
     #facet wrap the top 5-10 genes/transcripts?
     # do gene  level, isoform test
     #add results to output
@@ -400,13 +401,13 @@ rnaplots <- function(dds,sw=NULL,regulons=FALSE,pcut=0.05,nfcut=2,fcut=.5,folder
   if(length(gr)>0){
     hl=c(hl,gr[1:2])
     r=gpres$result %>% dplyr::filter(source=='GO:BP') %>% dplyr::select(source,term_id,term_name,p_values)
-    gptab=rbind(gptab,r[1:3,])
+    gptab=rbind(gptab,r[1:5,])
   }
   gr=gpres$result %>% dplyr::filter(source=='REAC') %>% dplyr::pull(term_id)
   if(length(gr)>0){
     hl=c(hl,gr[1:2])
     r=gpres$result %>% dplyr::filter(source=='REAC') %>% dplyr::select(source,term_id,term_name,p_values)
-    gptab=rbind(gptab,r[1:3,])
+    gptab=rbind(gptab,r[1:5,])
   }
   gptab$term_name=stringr::str_wrap(gptab$term_name,40)
   rres$gptab=gptab
