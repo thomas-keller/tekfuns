@@ -89,8 +89,10 @@ rnaplots <- function(dds,sw=NULL,regulons=FALSE,pcut=0.05,nfcut=2,fcut=.5,folder
     infl=dplyr::inner_join(infl,cold,by=dplyr::join_by(sample==names))
     p=ggplot2::ggplot(infl,aes(x=SYMBOL,
                                y=expression,
-                               color=condition))
-    p=p+scale_y_log10()+geom_boxplot(aes(group=sample))
+                               color=condition,
+                               shape=sample))
+    p=p+scale_y_log10()+geom_boxplot(aes(color=condition))
+    p=p+guides(shape='none')
     p=p+ggpubr::theme_pubr()
     p=p+ggpubr::labs_pubr()
     rres$toptscript=p
