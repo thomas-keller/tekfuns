@@ -321,8 +321,15 @@ rnaplots <- function(dds,sw=NULL,regulons=FALSE,pcut=0.05,nfcut=2,fcut=.5,folder
   rres$cnetfilt=p
 
   ego=enrichplot::pairwise_termsim(gres)
-  p=enrichplot::emapplot(ego,min_edge=.1)
-  rres$emap=p
+  mp=ego@termsim
+  diag(mp)=0
+  if(min(mp)>0){
+    p=enrichplot::emapplot(ego,min_edge=.1)
+    rres$emap=p
+  }
+    else{
+      rres$emap=NULL
+    }
   }
 
   if(nrow(gres2@result)>0){
