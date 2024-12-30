@@ -438,10 +438,18 @@ rnaplots <- function(dds,sw=NULL,regulons=FALSE,pcut=0.05,nfcut=2,fcut=.5,folder
     set.seed(54321)
     #could expand to handle candidate regulators
     #for now just taking the most 1k significant
-    nsel=min(200,nrow(mat))
-    m2=mat[1:nsel,]
-    row.names(m2)=resd$csymbol[1:nsel]
-    wm<-GENIE3::GENIE3(m2,nCores=4)
+
+    #use this transcript factor list
+    #to get more official, extract out the ids from the msig c3 regulator list
+    tfl=read.delim('https://inesdesantiago.github.io/SeqQC.blog/TFlists/Final_TFlist.txt')
+    tf2=tfl$ENSG[which(tfl$ENSG %in% rownames(mat))]
+    tfs=AnnotationDbi::mapIds(org.Hs.eg.db::org.Hs.eg.db, keys = tf2, column = c('SYMBOL'), keytype = 'ENSEMBL')
+    #nsel=min(200,nrow(mat))
+    #m2=mat[1:nsel,]
+    m2=mat
+    row.names(m2)=resd$symbol
+    m2=m2[!is.na(rownames(m2)),]
+    wm<-GENIE3::GENIE3(m2,regulators=tfs,nCores=4)
     ll=GENIE3::getLinkList(wm)
     #return up to 1k rows for table
     llt=ll[1:(min(1000,nrow(ll))),]
