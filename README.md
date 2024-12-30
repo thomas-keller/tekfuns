@@ -20,6 +20,10 @@ clusterprofiler has changed some of the option calls in the latest bioconductor.
 
 genie3 now predicts based on a list of [transcription factors](https://inesdesantiago.github.io/SeqQC.blog/TFlists/Final_TFlist.txt) . Thanks for the list and the [extensive post on how it was created](https://seqqc.wordpress.com/2020/12/05/where-to-find-a-comprehensive-list-of-potential-human-transcription-factors/)
 
+I'll probably continue tooling around with this for my specific use cases, but [a better wheel already invented exists](https://bioconductor.org/packages/release/bioc/vignettes/GeneTonic/inst/doc/GeneTonic_manual.html). It has a lot of nice looking figures, the only "downside" is a focus on GO/topGO for enrichment. 
+
+I've avoided topgo for awhile because while powerful, it is annoying to set up. GeneTonic introduced me to [mosdef](https://bioconductor.org/packages/3.20/mosdef) which is another related R library that automates some of the initial steps like DE/enrichment with topgo.
+
 ## Installation
 
 You can install the development version of tekfuns like so:

@@ -444,6 +444,8 @@ rnaplots <- function(dds,sw=NULL,regulons=FALSE,pcut=0.05,nfcut=2,fcut=.5,folder
     tfl=read.delim('https://inesdesantiago.github.io/SeqQC.blog/TFlists/Final_TFlist.txt')
     tf2=tfl$ENSG[which(tfl$ENSG %in% rownames(mat))]
     tfs=AnnotationDbi::mapIds(org.Hs.eg.db::org.Hs.eg.db, keys = tf2, column = c('SYMBOL'), keytype = 'ENSEMBL')
+    tfs=as.character(tfs)
+    tfs=tfs[!is.na(tfs)]
     #nsel=min(200,nrow(mat))
     #m2=mat[1:nsel,]
     m2=mat
