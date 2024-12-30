@@ -22,7 +22,7 @@ cnetfilt <- function(gse,fcut=2.0,showcat=3){
   g2@result=g2@result[which(fcore!=""),]
   g2@result$core_enrichment=fcore2
   g2=clusterProfiler::setReadable(g2,org.Hs.eg.db,"ENTREZID")
-  p=enrichplot::cnetplot(g2,color.params=list(foldChange=gl),showCategory=showcat)
+  p=enrichplot::cnetplot(g2,foldChange=gl,showCategory=showcat)
   #p=cnetplot(g2)
   return(p)
 }
