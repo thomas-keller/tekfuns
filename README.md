@@ -14,6 +14,8 @@ also, to save individual output (all results are returned in a list object), pro
 
 running genie3 on the whole rnaseq dataset produces a very large file, shortening to top 200 genes for now. hardcoded for now, allow option later.
 
+clusterprofiler has changed some of the option calls in the latest bioconductor. If you get an error, or things arent displaying correctly, update bioconductor and the associated libraries.
+
 ## Installation
 
 You can install the development version of tekfuns like so:
