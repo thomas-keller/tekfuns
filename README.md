@@ -16,6 +16,10 @@ running genie3 on the whole rnaseq dataset produces a very large file, shortenin
 
 clusterprofiler has changed some of the option calls in the latest bioconductor. If you get an error, or things arent displaying correctly, update bioconductor and the associated libraries.
 
+12/30/24
+
+genie3 now predicts based on a list of [transcription factors](https://inesdesantiago.github.io/SeqQC.blog/TFlists/Final_TFlist.txt) . Thanks for the list and the [extensive post on how it was created](https://seqqc.wordpress.com/2020/12/05/where-to-find-a-comprehensive-list-of-potential-human-transcription-factors/)
+
 ## Installation
 
 You can install the development version of tekfuns like so:
