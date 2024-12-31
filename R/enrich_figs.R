@@ -43,7 +43,7 @@ cnetfilt <- function(gse,fcut=2.0,showcat=3){
 #' @export
 #'
 #' @examples todo
-rnaplots <- function(dds,sw=NULL,regulons=FALSE,pcut=0.05,nfcut=2,fcut=.5,folder=NULL,fprefix=NULL){
+rnaplots <- function(dds,sw=NULL,regulons=FALSE,pcut=0.05,nfcut=1,fcut=0,folder=NULL,fprefix=NULL,nperm=500){
   if(!is.null(folder)){
     dir_create(folder)
   }
@@ -298,9 +298,9 @@ rnaplots <- function(dds,sw=NULL,regulons=FALSE,pcut=0.05,nfcut=2,fcut=.5,folder
   #if you take a look at the m_t2g dataframe we constructed from msigdbr, its has two columns, one with the pathway name (gs_name)
   #and one with the gene id (entrez_gene)
 
-  gres=clusterProfiler::GSEA(fc,TERM2GENE=m_t2g,pvalueCutoff=pcut)
+  gres=clusterProfiler::GSEA(fc,TERM2GENE=m_t2g,pvalueCutoff=pcut,nPermSimple=nperm)
 
-  gres2=clusterProfiler::GSEA(fc,TERM2GENE=m2_t2g,pvalueCutoff=pcut)
+  gres2=clusterProfiler::GSEA(fc,TERM2GENE=m2_t2g,pvalueCutoff=pcut,nPermSimple=nperm)
   #only use original enrich result for filtering genes with cnetfilt
   greso=gres
   #use setReadable to convert entrez ids to gene names
@@ -355,7 +355,7 @@ rnaplots <- function(dds,sw=NULL,regulons=FALSE,pcut=0.05,nfcut=2,fcut=.5,folder
 
   rres$fcl=fcl
   rres$enl=enl
-  cores=compareCluster(geneCluster=fcl,fun="gseGO",OrgDb=org.Hs.eg.db::org.Hs.eg.db,nPermSimple=10000,seed=42,pvalueCutoff=.1)
+  cores=compareCluster(geneCluster=fcl,fun="gseGO",OrgDb=org.Hs.eg.db::org.Hs.eg.db,seed=42,pvalueCutoff=.1,nPermSimple=nperm)
 
   #something overwrote the enrichplot dotplot, gives error unless prefix
   if(!is.null(cores)){
@@ -371,7 +371,7 @@ rnaplots <- function(dds,sw=NULL,regulons=FALSE,pcut=0.05,nfcut=2,fcut=.5,folder
   } else{
     rres$compbp=NULL
   }
-  cores=compareCluster(geneCluster=fcl,fun="GSEA",TERM2GENE=m_t2g,nPermSimple=10000,seed=42,pvalueCutoff=.1)
+  cores=compareCluster(geneCluster=fcl,fun="GSEA",TERM2GENE=m_t2g,nPermSimple=nperm,seed=42,pvalueCutoff=.1)
   #something overwrote the enrichplot dotplot, gives error unless prefix
   if(!is.null(cores)){
   p=enrichplot::dotplot(cores,color='NES')+scale_x_discrete(guide=guide_axis(n.dodge=2))
@@ -388,7 +388,7 @@ rnaplots <- function(dds,sw=NULL,regulons=FALSE,pcut=0.05,nfcut=2,fcut=.5,folder
     rres$comph=NULL
     rres$comphst=NULL
   }
-  cores=compareCluster(geneCluster=fcl,fun="GSEA",TERM2GENE=m2_t2g,nPermSimple=10000,seed=42,pvalueCutoff=.1)
+  cores=compareCluster(geneCluster=fcl,fun="GSEA",TERM2GENE=m2_t2g,nPermSimple=500,seed=42,pvalueCutoff=.1)
   #something overwrote the enrichplot dotplot, gives error unless prefix
   if(!is.null(cores)){
   p=enrichplot::dotplot(cores,color='NES')+scale_x_discrete(guide=guide_axis(n.dodge=2))
@@ -471,7 +471,9 @@ rnaplots <- function(dds,sw=NULL,regulons=FALSE,pcut=0.05,nfcut=2,fcut=.5,folder
     readr::write_csv(as.data.frame(rres$gres2),fname)
     fname=glue::glue("./{folder}/{fprefix}_compc2.csv")
     readr::write_csv(as.data.frame(rres$compc2st),fname)
-    fname=glue::glue('./{folder}/{fprefix}_reglist.csv')
+    if(!is.null(rres$ll)){
+      fname=glue::glue('./{folder}/{fprefix}_reglist.csv')
+    }
     readr::write_csv(rres$ll,fname)
     fname=glue::glue("./{folder}/{fprefix}_toptscript.pdf")
     ggplot2::ggsave(fname,plot=rres$toptscript,width=7,height=10)
