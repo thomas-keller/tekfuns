@@ -10,10 +10,11 @@ rnaplots(
   sw = NULL,
   regulons = FALSE,
   pcut = 0.05,
-  nfcut = 2,
-  fcut = 0.5,
+  nfcut = 1,
+  fcut = 0,
   folder = NULL,
-  fprefix = NULL
+  fprefix = NULL,
+  nperm = 500
 )
 }
 \arguments{

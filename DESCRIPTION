@@ -31,4 +31,6 @@ Imports:
     ggpubr,
     fishpond,
     org.Hs.eg.db,
-    GENIE3
+    GENIE3,
+    GeneTonic,
+    mosdef
