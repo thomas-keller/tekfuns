@@ -162,28 +162,28 @@ ggs_graphm <- function(res_enrich,
   })
   list2df <- do.call("rbind", list2df)
 
-  g <- graph_from_data_frame(list2df, directed = FALSE)
+  g <- igraph::graph_from_data_frame(list2df, directed = FALSE)
 
-  nodeIDs_gs <- which(names(V(g)) %in% enriched_gsnames)
-  nodeIDs_genes <- which(!(names(V(g)) %in% enriched_gsnames))
+  nodeIDs_gs <- which(names(igraph::V(g)) %in% enriched_gsnames)
+  nodeIDs_genes <- which(!(names(igraph::V(g)) %in% enriched_gsnames))
 
-  V(g)$nodetype <- NA
-  V(g)$nodetype[nodeIDs_gs] <- "GeneSet"
-  V(g)$nodetype[nodeIDs_genes] <- "Feature"
+  igraph::V(g)$nodetype <- NA
+  igraph::V(g)$nodetype[nodeIDs_gs] <- "GeneSet"
+  igraph::V(g)$nodetype[nodeIDs_genes] <- "Feature"
 
   if (prettify) {
     # different shapes based on the node type
 
     # this does not work with visNetwork?
-    # V(g)$value <- 15 # size? size2? or does this not work with the shapes I selected?
-    # V(g)$value[nodeIDs_gs] <- 45
+    # igraph::V(g)$value <- 15 # size? size2? or does this not work with the shapes I selected?
+    # igraph::V(g)$value[nodeIDs_gs] <- 45
 
     # this one is handled correctly by visNetwork
-    V(g)$shape <- c("box", "ellipse")[factor(V(g)$nodetype, levels = c("GeneSet", "Feature"))]
+    igraph::V(g)$shape <- c("box", "ellipse")[factor(igraph::V(g)$nodetype, levels = c("GeneSet", "Feature"))]
 
 
     # different colors for the gene nodes in function of their logFC
-    fcs_genes <- res_de[annotation_obj$gene_id[match((V(g)$name[nodeIDs_genes]), annotation_obj$gene_name)], ]$log2FoldChange
+    fcs_genes <- res_de[annotation_obj$gene_id[match((igraph::V(g)$name[nodeIDs_genes]), annotation_obj$gene_name)], ]$log2FoldChange
 
     if (!is.null(genes_graph_colpal)) {
       mypal <- genes_graph_colpal
@@ -193,30 +193,30 @@ ggs_graphm <- function(res_enrich,
       ))
     }
 
-    V(g)$color[nodeIDs_genes] <- mosdef::map_to_color(fcs_genes, mypal, limits = c(-4, 4))
-    V(g)$color[nodeIDs_gs] <- geneset_graph_color
+    igraph::V(g)$color[nodeIDs_genes] <- mosdef::map_to_color(fcs_genes, mypal, limits = c(-4, 4))
+    igraph::V(g)$color[nodeIDs_gs] <- geneset_graph_color
 
     # title for tooltips
-    V(g)$title <- NA
-    V(g)$title[nodeIDs_gs] <- paste0(
+    igraph::V(g)$title <- NA
+    igraph::V(g)$title[nodeIDs_gs] <- paste0(
       "<h4>",
       sprintf('<a href="https://www.gsea-msigdb.org/gsea/msigdb/human/geneset/%s.html" target="_blank">%s</a>', enriched_gsnames[nodeIDs_gs], enriched_gsids[nodeIDs_gs]), "</h4><br>",
-      V(g)$name[nodeIDs_gs], "<br><br>",
+      igraph::V(g)$name[nodeIDs_gs], "<br><br>",
       sapply(enriched_gsdescs[nodeIDs_gs],function(x) paste0(strwrap(x,50),collapse='<br>'))
     )
-    V(g)$title[nodeIDs_genes] <- paste0(
-      "<h4>", V(g)$name[nodeIDs_genes], "</h4><br>",
+    igraph::V(g)$title[nodeIDs_genes] <- paste0(
+      "<h4>", igraph::V(g)$name[nodeIDs_genes], "</h4><br>",
       "logFC = ", format(round(fcs_genes, 2), nsmall = 2)
     )
 
   } else {
-    V(g)$color[nodeIDs_genes] <- "#B3B3B3"
-    V(g)$color[nodeIDs_gs] <- "#E5C494"
+    igraph::V(g)$color[nodeIDs_genes] <- "#B3B3B3"
+    igraph::V(g)$color[nodeIDs_gs] <- "#E5C494"
   }
 
   # re-sorting the vertices alphabetically
-  rank_gs <- rank(V(g)$name[V(g)$nodetype == "GeneSet"])
-  rank_feats <- rank(V(g)$name[V(g)$nodetype == "Feature"]) +
+  rank_gs <- rank(igraph::V(g)$name[igraph::V(g)$nodetype == "GeneSet"])
+  rank_feats <- rank(igraph::V(g)$name[igraph::V(g)$nodetype == "Feature"]) +
     length(rank_gs) # to keep the GeneSets first
   g <- permute(g, c(rank_gs, rank_feats))
 
