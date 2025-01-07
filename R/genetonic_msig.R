@@ -218,7 +218,7 @@ ggs_graphm <- function(res_enrich,
   rank_gs <- rank(igraph::V(g)$name[igraph::V(g)$nodetype == "GeneSet"])
   rank_feats <- rank(igraph::V(g)$name[igraph::V(g)$nodetype == "Feature"]) +
     length(rank_gs) # to keep the GeneSets first
-  g <- permute(g, c(rank_gs, rank_feats))
+  g <- igraph::permute(g, c(rank_gs, rank_feats))
 
   return(g)
 }
