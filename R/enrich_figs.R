@@ -69,7 +69,7 @@ rnaplots <- function(dds,sw=NULL,regulons=FALSE,pcut=0.05,nfcut=1,fcut=0,folder=
     #could move to a function
     sw <- tximeta::addIds(sw, "SYMBOL", gene=TRUE)
 
-    iso <- isoformProportions(y)
+    iso <- isoformProportions(sw)
     iso <- swish(iso, x="condition")
     iso <- tximeta::addIds(iso, "SYMBOL", gene=TRUE)
     cols <- c("log10mean","log2FC","pvalue","qvalue")
@@ -114,6 +114,7 @@ rnaplots <- function(dds,sw=NULL,regulons=FALSE,pcut=0.05,nfcut=1,fcut=0,folder=
 
   } else{
     rres$toptscript=NULL
+    rres$isores
   }
 
 
