@@ -70,5 +70,9 @@ rp=rnaplots(dds,fcut=1.5,pcut=.1,folder='exfolder',fprefix='exres')
 #se is a tximeta object from salmon
 rp=rnaplots(dds,sw=se,regulons=TRUE,pcut=.1,nfcut=1,folder='exfolder',fprefix='exres')
 
+#example of modified genetonic functions using macrophage datasets
+#TODO
+
+
 ```
 

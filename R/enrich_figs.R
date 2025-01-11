@@ -68,6 +68,17 @@ rnaplots <- function(dds,sw=NULL,regulons=FALSE,pcut=0.05,nfcut=1,fcut=0,folder=
     #todo implement a ggplot for infrep plot
     #could move to a function
     sw <- tximeta::addIds(sw, "SYMBOL", gene=TRUE)
+
+    iso <- isoformProportions(y)
+    iso <- swish(iso, x="condition")
+    iso <- tximeta::addIds(iso, "SYMBOL", gene=TRUE)
+    cols <- c("log10mean","log2FC","pvalue","qvalue")
+    most.sig <- with(mcols(iso),
+                     order(qvalue, -abs(log2FC)))
+    #tres<-mcols(iso)[head(most.sig),c("log2FC","qvalue")]
+    tres<-as.data.frame(mcols(iso)[most.sig,])
+    tres<- tres %>% dplyr::filter(qvalue<=0.05)
+    rres$isores=tres
     #get top/bottom most genes by lfc
     gids=c(hi[1:5],lo[1:5])
     infReps <- SummarizedExperiment::assays(sw[gids,])[grep("infRep",
