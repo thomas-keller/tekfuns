@@ -73,6 +73,7 @@ rnaplots <- function(dds,sw=NULL,regulons=FALSE,pcut=0.05,nfcut=1,fcut=0,folder=
     iso <- swish(iso, x="condition")
     iso <- tximeta::addIds(iso, "SYMBOL", gene=TRUE)
     cols <- c("log10mean","log2FC","pvalue","qvalue")
+    print(head(mcols(iso)))
     most.sig <- with(mcols(iso),
                      order(qvalue, -abs(log2FC)))
     #tres<-mcols(iso)[head(most.sig),c("log2FC","qvalue")]
