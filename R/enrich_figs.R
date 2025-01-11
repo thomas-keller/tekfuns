@@ -80,6 +80,7 @@ rnaplots <- function(dds,sw=NULL,regulons=FALSE,pcut=0.05,nfcut=1,fcut=0,folder=
     #tres<-mcols(iso)[head(most.sig),c("log2FC","qvalue")]
     tres<-ires[most.sig,]
     tres<- tres %>% dplyr::filter(qvalue<=0.05)
+    tres <- tres %>% dplyr::relocate(tx_id,gene_id,log10mean,log2FC,qvalue,SYMBOL)
     rres$isores=tres
     #get top/bottom most genes by lfc
     gids=c(hi[1:5],lo[1:5])
