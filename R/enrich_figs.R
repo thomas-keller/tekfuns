@@ -73,11 +73,12 @@ rnaplots <- function(dds,sw=NULL,regulons=FALSE,pcut=0.05,nfcut=1,fcut=0,folder=
     iso <- swish(iso, x="condition")
     iso <- tximeta::addIds(iso, "SYMBOL", gene=TRUE)
     cols <- c("log10mean","log2FC","pvalue","qvalue")
-    print(head(mcols(iso)))
-    most.sig <- with(mcols(iso),
+    ires <- as.data.frame(mcols(iso))
+    #print(head(mcols(iso)))
+    most.sig <- with(ires,
                      order(qvalue, -abs(log2FC)))
     #tres<-mcols(iso)[head(most.sig),c("log2FC","qvalue")]
-    tres<-as.data.frame(mcols(iso)[most.sig,])
+    tres<-ires[most.sig,]
     tres<- tres %>% dplyr::filter(qvalue<=0.05)
     rres$isores=tres
     #get top/bottom most genes by lfc
