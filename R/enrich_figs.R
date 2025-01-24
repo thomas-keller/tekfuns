@@ -38,6 +38,7 @@ cnetfilt <- function(gse,fcut=2.0,showcat=3){
 #' @param folder output result folder
 #' @param fprefix output analysis prefix
 #' @param nfcut gsea filter for network plots
+#' @param fcut filter DE results to minimum fold-change
 #'
 #' @return list of plots
 #' @export
@@ -287,8 +288,8 @@ rnaplots <- function(dds,sw=NULL,regulons=FALSE,pcut=0.05,nfcut=1,fcut=0,folder=
   p=p+ggplot2::xlab("gene symbol")+ggplot2::ylab("log10 counts")
   rres$topgdot=p
   #now to enrich plots
-  fc=resd$log2FoldChange
-  names(fc)=resd$entrez
+  fc=res05$log2FoldChange
+  names(fc)=res05$entrez
   fc=sort(fc,decreasing=TRUE)
   fc=fc[!is.na(names(fc))]
   fc=fc[!duplicated(names(fc))]
@@ -447,6 +448,8 @@ rnaplots <- function(dds,sw=NULL,regulons=FALSE,pcut=0.05,nfcut=1,fcut=0,folder=
   #                       width = NA, height = NA, filename = NULL )
   pp<-gprofiler2::publish_gostplot(p)
   rres$gp2=pp
+  gosta=gprofiler2::gost(names(fc),organism='hsapiens',ordered_query=T)
+  rres$gpa=gosta
 
   #get regulons w/ genie3 if regulons not false
   if(regulons){
