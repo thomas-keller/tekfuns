@@ -450,6 +450,12 @@ rnaplots <- function(dds,sw=NULL,regulons=FALSE,pcut=0.05,nfcut=1,fcut=0,folder=
   rres$gp2=pp
   gosta=gprofiler2::gost(names(fc),organism='hsapiens',ordered_query=T)
   rres$gpa=gosta
+  pi=gprofiler2::gostplot(gosta, capped = TRUE, interactive = TRUE)
+  p=gprofiler2::gostplot(gosta, capped = TRUE, interactive = FALSE)
+  pp<-gprofiler2::publish_gostplot(p)
+  rres$gpap2=pp
+  rres$gpap=pi
+
 
   #get regulons w/ genie3 if regulons not false
   if(regulons){
